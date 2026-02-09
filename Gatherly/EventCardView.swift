@@ -10,9 +10,6 @@ import SwiftUI
 
 struct EventCardView: View {
     let event: Event
-    private var timestampFormatted: String {
-        event.timestamp.formatted(.dateTime.month(.abbreviated).day().year())
-    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -24,7 +21,7 @@ struct EventCardView: View {
                 Text(event.title)
                     .font(.title)
 
-                Text(timestampFormatted)
+                Text(event.timestamp.formatted(date: .abbreviated, time: .omitted))
                     .font(.title)
                     .foregroundStyle(.secondary)
             }

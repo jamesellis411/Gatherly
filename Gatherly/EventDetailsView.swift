@@ -1,0 +1,122 @@
+//
+//  EventDetailsView.swift
+//  Gatherly
+//
+//  Created by James Ellis on 2/6/26.
+//
+
+import Foundation
+import SwiftUI
+
+struct EventDetailsView: View {
+    let event: Event
+    @Environment(\.dismiss) private var dismiss // Syntax for dismiss action in back button
+    @State private var isShowingDialog = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Image("tempImage")
+                .resizable()
+                .scaledToFit()
+                .ignoresSafeArea(edges: .horizontal)
+                .padding(-10)
+
+            Spacer()
+                .frame(height: 1)
+
+            // Event Details
+            VStack(alignment: .leading, spacing: 12) {
+                Text(event.title)
+                    .font(.title)
+                    .fontWeight(.semibold)
+
+                HStack(spacing: 20) {
+                    Text(event.timestamp.formatted(date: .abbreviated, time: .omitted))
+
+                    Text("•")
+
+                    Text(event.timestamp.formatted(date: .omitted, time: .shortened))
+                }
+                .foregroundStyle(.secondary)
+                .font(.title3)
+
+                Text(event.location)
+                    .foregroundStyle(.secondary)
+                    .font(.title3)
+
+                Divider()
+                    .overlay(.gray)
+            }
+
+            // Event Description
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Description")
+                    .font(.title3)
+                Text(event.description)
+                    .foregroundStyle(.secondary)
+                    .font(.title3)
+            }
+
+            Spacer()
+                .frame(height: 15)
+
+            HStack {
+                Spacer()
+                Button(action: {
+                    // Put RSVP functionality here
+                }) {
+                    Text("RSVP")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 48)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(.cyan, lineWidth: 2)
+                        )
+                }
+                .foregroundStyle(.primary)
+                Spacer()
+            }
+        }
+        .padding(.horizontal, 10)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                }
+            }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    isShowingDialog = true
+                }) {
+                    Image(systemName: "ellipsis")
+                }
+            }
+        }
+        .confirmationDialog("Advanced Actions", isPresented: $isShowingDialog, titleVisibility: .visible) {
+            Button("Edit Event") {
+                // Edit action
+            }
+            Button("Delete Event", role: .destructive) {
+                // Delete action
+            }
+            Button("Cancel", role: .cancel) {
+                isShowingDialog = false
+            }
+        } message: {
+            Text("Make changes to your event")
+        }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        EventDetailsView(event: Event.example)
+            .preferredColorScheme(ColorScheme.dark)
+    }
+}

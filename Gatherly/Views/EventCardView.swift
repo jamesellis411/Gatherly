@@ -21,7 +21,7 @@ struct EventCardView: View {
                 Text(event.title)
                     .font(.title)
 
-                Text(event.timestamp.formatted(date: .abbreviated, time: .omitted)) // Question: does it make more sense to declare this as a variable instead to clean it up?
+                Text(event.timestamp.formatted(date: .abbreviated, time: .omitted))
                     .font(.title)
                     .foregroundStyle(.secondary)
             }

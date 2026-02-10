@@ -13,15 +13,15 @@ struct EventCardView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Image("tempImage")
+            Image("tempImage") // Change later to load image from URL
                 .resizable()
                 .scaledToFit()
 
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 10) {
                 Text(event.title)
                     .font(.title)
 
-                Text(event.timestamp.formatted(date: .abbreviated, time: .omitted))
+                Text(event.timestamp.formatted(date: .abbreviated, time: .omitted)) // Question: does it make more sense to declare this as a variable instead to clean it up?
                     .font(.title)
                     .foregroundStyle(.secondary)
             }

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct EventDetailsView: View {
+struct EventDetailView: View {
     let event: Event
     @Environment(\.dismiss) private var dismiss // Syntax for dismiss action in back button
     @State private var isShowingDialog = false
@@ -116,7 +116,7 @@ struct EventDetailsView: View {
 
 #Preview {
     NavigationStack {
-        EventDetailsView(event: Event.example)
+        EventDetailView(event: Event.example)
             .preferredColorScheme(ColorScheme.dark)
     }
 }

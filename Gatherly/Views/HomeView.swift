@@ -8,26 +8,31 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var vm = EventsViewModel()
+    @State private var vm = EventViewModel()
     let columns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 22) {
-                    ForEach(vm.events, id: \.self) { event in
+                    ForEach(vm.filteredEventIndices, id: \.self) { index in
                         NavigationLink {
-                            EventDetailsView(event: event)
+                            EventDetailView(event: vm.events[index])
                         } label: {
-                            EventCardView(event: event)
+                            EventCardView(event: vm.events[index])
                         }
                         .buttonStyle(.plain)
                     }
                 }
                 .padding(18)
             }
+            .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
             .task {
-                await vm.fetchEvents()
+                do {
+                    vm.events = try await vm.fetchEvents()
+                } catch {
+                    print("there was an error: \(error.localizedDescription)")
+                }
             }
         }
     }

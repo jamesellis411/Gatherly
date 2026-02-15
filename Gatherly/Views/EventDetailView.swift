@@ -81,7 +81,13 @@ struct EventDetailView: View {
         }
         .padding(.horizontal, 10)
         .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Edit Details")
+                    .fontWeight(.semibold)
+                    .font(.title2)
+            }
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
                     dismiss()

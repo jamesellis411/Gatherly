@@ -97,7 +97,6 @@ struct EditEventView: View {
             }
         }
         .padding()
-        .navigationTitle("Edit Event")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {

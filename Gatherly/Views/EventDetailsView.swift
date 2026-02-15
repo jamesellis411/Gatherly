@@ -99,8 +99,8 @@ struct EventDetailsView: View {
             }
         }
         .confirmationDialog("Advanced Actions", isPresented: $isShowingDialog, titleVisibility: .visible) {
-            Button("Edit Event") {
-                // Edit action
+            NavigationLink("Edit Event") {
+                EditEventView(event: event)
             }
             Button("Delete Event", role: .destructive) {
                 // Delete action

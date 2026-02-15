@@ -10,7 +10,8 @@ import SwiftUI
 
 struct EditEventView: View {
     @Environment(\.dismiss) private var dismiss // Dismiss documentation
-    @State var event: Event
+    @Bindable var vm: EditEventViewModel
+
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
             VStack(alignment: .leading, spacing: 12) {
@@ -38,7 +39,7 @@ struct EditEventView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Event Title")
                     .font(.title)
-                TextField("", text: $event.title, axis: .vertical)
+                TextField("", text: $vm.event.title, axis: .vertical)
                 Divider()
                     .frame(height: 1)
                     .overlay(.gray)
@@ -48,7 +49,7 @@ struct EditEventView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Location")
                     .font(.title)
-                TextField("", text: $event.location, axis: .vertical)
+                TextField("", text: $vm.event.location, axis: .vertical)
                 Divider()
                     .frame(height: 1)
                     .overlay(.gray)
@@ -58,7 +59,7 @@ struct EditEventView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Date and Time")
                     .font(.title)
-                DatePicker("", selection: $event.timestamp, displayedComponents: [.date, .hourAndMinute])
+                DatePicker("", selection: $vm.event.timestamp, displayedComponents: [.date, .hourAndMinute])
                     .labelsHidden() // Ask for clarification on why "" didn't remove section?
             }
 
@@ -66,7 +67,7 @@ struct EditEventView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Event Description")
                     .font(.title)
-                TextField("", text: $event.description, axis: .vertical)
+                TextField("", text: $vm.event.description, axis: .vertical)
                 Divider()
                     .frame(height: 1)
                     .overlay(.gray)
@@ -107,7 +108,7 @@ struct EditEventView: View {
 
 #Preview {
     NavigationStack {
-        EditEventView(event: Event.example)
+        EditEventView(vm: EditEventViewModel(event: Event.example))
 //            .preferredColorScheme(ColorScheme.dark)
     }
 }

@@ -100,7 +100,7 @@ struct EventDetailsView: View {
         }
         .confirmationDialog("Advanced Actions", isPresented: $isShowingDialog, titleVisibility: .visible) {
             NavigationLink("Edit Event") {
-                EditEventView(event: event)
+                EditEventView(vm: EditEventViewModel(event: event))
             }
             Button("Delete Event", role: .destructive) {
                 // Delete action

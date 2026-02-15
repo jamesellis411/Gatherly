@@ -14,6 +14,31 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
+                HStack {
+                    Button(action: {
+                        // Add functionality later
+                    }) {
+                        Text("Sort by")
+                            .padding(8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(.white, lineWidth: 2)
+                            )
+                    }
+
+                    Spacer()
+                    NavigationLink {
+                        AddEventView(vm: AddEventViewModel())
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "plus")
+                            Text("Create Event")
+                        }
+                    }
+                }
+                .padding(7)
+                .foregroundStyle(.white)
+
                 LazyVGrid(columns: columns, spacing: 22) {
                     ForEach(vm.filteredEventIndices, id: \.self) { index in
                         NavigationLink {
@@ -24,8 +49,8 @@ struct HomeView: View {
                         .buttonStyle(.plain)
                     }
                 }
-                .padding(18)
             }
+            .padding(.horizontal, 18)
             .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
             .task {
                 do {

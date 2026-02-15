@@ -39,7 +39,7 @@ struct EditEventView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Event Title")
                     .font(.title)
-                TextField("", text: $vm.event.title, axis: .vertical)
+                TextField("", text: $vm.title, axis: .vertical)
                 Divider()
                     .frame(height: 1)
                     .overlay(.gray)
@@ -49,7 +49,7 @@ struct EditEventView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Location")
                     .font(.title)
-                TextField("", text: $vm.event.location, axis: .vertical)
+                TextField("", text: $vm.location, axis: .vertical)
                 Divider()
                     .frame(height: 1)
                     .overlay(.gray)
@@ -59,7 +59,7 @@ struct EditEventView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Date and Time")
                     .font(.title)
-                DatePicker("", selection: $vm.event.timestamp, displayedComponents: [.date, .hourAndMinute])
+                DatePicker("", selection: $vm.timestamp, displayedComponents: [.date, .hourAndMinute])
                     .labelsHidden() // Ask for clarification on why "" didn't remove section?
             }
 
@@ -67,7 +67,7 @@ struct EditEventView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Event Description")
                     .font(.title)
-                TextField("", text: $vm.event.description, axis: .vertical)
+                TextField("", text: $vm.description, axis: .vertical)
                 Divider()
                     .frame(height: 1)
                     .overlay(.gray)

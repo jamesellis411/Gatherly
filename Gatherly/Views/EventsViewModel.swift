@@ -11,7 +11,7 @@ import Observation
 @Observable
 class EventsViewModel {
     var events: [Event] = []
-    
+
     func fetchEvents() async {
         // define url
         guard let url = URL(string: "https://gatherly-backend-q9vm.onrender.com/events") else { fatalError("Invalid URL") }

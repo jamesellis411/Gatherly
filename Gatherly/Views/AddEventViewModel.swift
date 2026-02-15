@@ -15,7 +15,7 @@ class AddEventViewModel {
     var title: String = ""
     var location: String = ""
     var description: String = ""
-    var timestamp: Date = Date()
+    var timestamp: Date = .init()
     var image_url: String?
     var image: String?
 

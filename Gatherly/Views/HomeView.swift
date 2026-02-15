@@ -9,11 +9,12 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var vm = EventsViewModel()
+    let columns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
+                LazyVGrid(columns: columns, spacing: 22) {
                     ForEach(vm.events, id: \.self) { event in
                         NavigationLink {
                             EventDetailsView(event: event)
@@ -23,7 +24,7 @@ struct HomeView: View {
                         .buttonStyle(.plain)
                     }
                 }
-                .padding()
+                .padding(18)
             }
             .task {
                 await vm.fetchEvents()

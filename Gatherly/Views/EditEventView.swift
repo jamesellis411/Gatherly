@@ -17,20 +17,16 @@ struct EditEventView: View {
             VStack(alignment: .leading, spacing: 12) {
                 // Change Cover Photo Button
                 Text("Change Cover Photo")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.medium)
                 HStack(alignment: .center) {
                     Button(action: {
                         // Implement cover photo functionality
                     }) {
                         Image(systemName: "plus")
-                            .font(.system(size: 45))
-                            .frame(width: 100, height: 100)
-                            .background(
-                                Rectangle()
-                                    .frame(width: 100, height: 100)
-                                    .foregroundColor(.gray).opacity(0.3)
-                            )
+                            .font(.largeTitle)
+                            .padding(25)
+                            .background(.thinMaterial)
                     }
                 }
             }
@@ -38,42 +34,42 @@ struct EditEventView: View {
             // Event Field
             VStack(alignment: .leading, spacing: 8) {
                 Text("Event Title")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.medium)
                 TextField("", text: $vm.title, axis: .vertical)
+                    .foregroundStyle(.secondary)
                 Divider()
-                    .frame(height: 1)
                     .overlay(.gray)
             }
 
             // Location Field
             VStack(alignment: .leading, spacing: 8) {
                 Text("Location")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.medium)
                 TextField("", text: $vm.location, axis: .vertical)
+                    .foregroundStyle(.secondary)
                 Divider()
-                    .frame(height: 1)
                     .overlay(.gray)
             }
 
             // Date and Time Field
             VStack(alignment: .leading, spacing: 8) {
                 Text("Date and Time")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.medium)
                 DatePicker("", selection: $vm.timestamp, displayedComponents: [.date, .hourAndMinute])
-                    .labelsHidden() // Ask for clarification on why "" didn't remove section?
+                    .labelsHidden()
             }
 
             // Event Description Field
             VStack(alignment: .leading, spacing: 8) {
                 Text("Event Description")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.medium)
                 TextField("", text: $vm.description, axis: .vertical)
+                    .foregroundStyle(.secondary)
                 Divider()
-                    .frame(height: 1)
                     .overlay(.gray)
             }
 
@@ -83,7 +79,7 @@ struct EditEventView: View {
                     // Put Save Functionality Here
                 }) {
                     Text("Save")
-                        .font(.title)
+                        .font(.title2)
                         .fontWeight(.semibold)
                         .padding(.horizontal, 70)
                         .padding(.vertical, 8)

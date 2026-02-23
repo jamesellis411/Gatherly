@@ -74,13 +74,9 @@ struct EventDetailView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .navigationTitle("Event Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("Event Details")
-                    .fontWeight(.semibold)
-                    .font(.title2)
-            }
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
                     dismiss()

@@ -37,7 +37,7 @@ struct AddEventView: View {
                 Text("Event Title")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.title, prompt: Text("Write your event's title"), axis: .vertical)
+                TextField("Write your event's title", text: $vm.title, axis: .vertical)
                 Divider()
                     .overlay(.gray)
             }
@@ -47,7 +47,7 @@ struct AddEventView: View {
                 Text("Location")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.location, prompt: Text("Choose location of event"), axis: .vertical)
+                TextField("Choose location of event", text: $vm.location, axis: .vertical)
                 Divider()
                     .overlay(.gray)
             }
@@ -66,7 +66,7 @@ struct AddEventView: View {
                 Text("Event Description")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.description, prompt: Text("Write a description for your event"), axis: .vertical)
+                TextField("Write a description for your event", text: $vm.description, axis: .vertical)
                 Divider()
                     .overlay(.gray)
             }
@@ -91,15 +91,10 @@ struct AddEventView: View {
             }
         }
         .padding()
-        .navigationTitle("Edit Event")
+        .navigationTitle("Create Event")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("Create Event")
-                    .fontWeight(.semibold)
-                    .font(.title2)
-            }
             ToolbarItem(placement: .topBarLeading) {
                 Button("Cancel") {
                     dismiss()

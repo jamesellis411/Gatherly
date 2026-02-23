@@ -11,7 +11,7 @@ import Observation
 @Observable
 class ProfileViewModel {
     let tabs = ["RSVP'd", "Past Events"]
-    var selectedTab: String = "My Events"
+    var selectedTab: String = "RSVP'd"
 
     func selectTab(tab: String) {
         selectedTab = tab

@@ -19,7 +19,7 @@ struct Event: Hashable, Codable, Identifiable {
 
 extension Event {
     static var example: Event =
-        Event(
+        .init(
             title: "Sunset Concert",
             location: "Student Union Ballroom",
             description: "Join fellow students for a night of collaborative coding, snacks, and fun.",

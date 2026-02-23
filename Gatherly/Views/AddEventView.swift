@@ -1,24 +1,25 @@
 //
-//  EditEventView.swift
+//  AddEventView.swift
 //  Gatherly
 //
-//  Created by James Ellis on 2/9/26.
+//  Created by James Ellis on 2/14/26.
 //
 
 import Foundation
 import SwiftUI
 
-struct EditEventView: View {
+struct AddEventView: View {
     @Environment(\.dismiss) private var dismiss // Dismiss documentation
-    @Bindable var vm: EditEventViewModel
+    @Bindable var vm: AddEventViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
             VStack(alignment: .leading, spacing: 12) {
                 // Change Cover Photo Button
-                Text("Change Cover Photo")
+                Text("Upload Cover Photo")
                     .font(.title2)
                     .fontWeight(.medium)
+
                 HStack(alignment: .center) {
                     Button(action: {
                         // Implement cover photo functionality
@@ -36,8 +37,7 @@ struct EditEventView: View {
                 Text("Event Title")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.title, axis: .vertical)
-                    .foregroundStyle(.secondary)
+                TextField("", text: $vm.title, prompt: Text("Write your event's title"), axis: .vertical)
                 Divider()
                     .overlay(.gray)
             }
@@ -47,8 +47,7 @@ struct EditEventView: View {
                 Text("Location")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.location, axis: .vertical)
-                    .foregroundStyle(.secondary)
+                TextField("", text: $vm.location, prompt: Text("Choose location of event"), axis: .vertical)
                 Divider()
                     .overlay(.gray)
             }
@@ -67,8 +66,7 @@ struct EditEventView: View {
                 Text("Event Description")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.description, axis: .vertical)
-                    .foregroundStyle(.secondary)
+                TextField("", text: $vm.description, prompt: Text("Write a description for your event"), axis: .vertical)
                 Divider()
                     .overlay(.gray)
             }
@@ -76,12 +74,12 @@ struct EditEventView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    // Put Save Functionality Here
+                    // Put Create Functionality Here
                 }) {
-                    Text("Save")
+                    Text("Create Event")
                         .font(.title2)
                         .fontWeight(.semibold)
-                        .padding(.horizontal, 70)
+                        .padding(.horizontal, 40)
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 12)
@@ -93,11 +91,12 @@ struct EditEventView: View {
             }
         }
         .padding()
+        .navigationTitle("Edit Event")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Edit Event")
+                Text("Create Event")
                     .fontWeight(.semibold)
                     .font(.title2)
             }
@@ -112,7 +111,7 @@ struct EditEventView: View {
 
 #Preview {
     NavigationStack {
-        EditEventView(vm: EditEventViewModel(event: Event.example))
+        AddEventView(vm: AddEventViewModel())
             .preferredColorScheme(ColorScheme.dark)
     }
 }

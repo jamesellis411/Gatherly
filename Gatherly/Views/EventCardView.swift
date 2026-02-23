@@ -15,18 +15,21 @@ struct EventCardView: View {
         VStack(alignment: .leading) {
             Image("tempImage") // Change later to load image from URL
                 .resizable()
-                .scaledToFit()
+                .scaledToFill()
+                .frame(width: 164, height: 111)
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(event.title)
-                    .font(.title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
 
                 Text(event.timestamp.formatted(date: .abbreviated, time: .omitted))
-                    .font(.title)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-            .padding(EdgeInsets(top: 8, leading: 16, bottom: 20, trailing: 16))
+            .padding(12)
         }
+        .frame(width: 164, height: 178)
         .background(.regularMaterial)
         .cornerRadius(11)
     }

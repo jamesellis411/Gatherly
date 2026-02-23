@@ -8,21 +8,16 @@
 import Foundation
 import SwiftUI
 
-struct EventDetailsView: View {
+struct EventDetailView: View {
     let event: Event
     @Environment(\.dismiss) private var dismiss // Syntax for dismiss action in back button
     @State private var isShowingDialog = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 30) {
             Image("tempImage")
                 .resizable()
                 .scaledToFit()
-                .ignoresSafeArea(edges: .horizontal)
-                .padding(-10)
-
-            Spacer()
-                .frame(height: 1)
 
             // Event Details
             VStack(alignment: .leading, spacing: 12) {
@@ -47,6 +42,7 @@ struct EventDetailsView: View {
                 Divider()
                     .overlay(.gray)
             }
+            .padding(.horizontal, 10)
 
             // Event Description
             VStack(alignment: .leading, spacing: 12) {
@@ -56,9 +52,7 @@ struct EventDetailsView: View {
                     .foregroundStyle(.secondary)
                     .font(.title3)
             }
-
-            Spacer()
-                .frame(height: 15)
+            .padding(.horizontal, 10)
 
             HStack {
                 Spacer()
@@ -79,9 +73,14 @@ struct EventDetailsView: View {
                 Spacer()
             }
         }
-        .padding(.horizontal, 10)
         .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Event Details")
+                    .fontWeight(.semibold)
+                    .font(.title2)
+            }
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
                     dismiss()
@@ -99,8 +98,8 @@ struct EventDetailsView: View {
             }
         }
         .confirmationDialog("Advanced Actions", isPresented: $isShowingDialog, titleVisibility: .visible) {
-            Button("Edit Event") {
-                // Edit action
+            NavigationLink("Edit Event") {
+                EditEventView(vm: EditEventViewModel(event: event))
             }
             Button("Delete Event", role: .destructive) {
                 // Delete action
@@ -116,7 +115,7 @@ struct EventDetailsView: View {
 
 #Preview {
     NavigationStack {
-        EventDetailsView(event: Event.example)
+        EventDetailView(event: Event.example)
             .preferredColorScheme(ColorScheme.dark)
     }
 }

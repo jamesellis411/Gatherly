@@ -8,42 +8,58 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var events: [Event] = []
+    @State private var vm = EventViewModel()
+    let columns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)]
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    ForEach(events, id: \.self) { event in
+                HStack {
+                    Button(action: {
+                        // Add functionality later
+                    }) {
+                        Text("Sort by")
+                            .padding(8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(.white, lineWidth: 2)
+                            )
+                    }
+
+                    Spacer()
+                    NavigationLink {
+                        AddEventView(vm: AddEventViewModel())
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "plus")
+                            Text("Create Event")
+                        }
+                    }
+                }
+                .padding(7)
+                .foregroundStyle(.white)
+
+                LazyVGrid(columns: columns, spacing: 22) {
+                    ForEach(vm.filteredEventIndices, id: \.self) { index in
                         NavigationLink {
-                            EventDetailsView(event: event)
+                            EventDetailView(event: vm.events[index])
                         } label: {
-                            EventCardView(event: event)
+                            EventCardView(event: vm.events[index])
                         }
                         .buttonStyle(.plain)
                     }
                 }
-                .padding()
             }
+            .padding(.horizontal, 18)
+            .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
             .task {
                 do {
-                    events = try await fetchEvents()
+                    vm.events = try await vm.fetchEvents()
                 } catch {
-                    print("Failed to fetch events")
+                    print("there was an error: \(error.localizedDescription)")
                 }
             }
         }
-    }
-
-    func fetchEvents() async throws -> [Event] {
-        // define url
-        guard let url = URL(string: "https://gatherly-backend-q9vm.onrender.com/events") else { fatalError("Invalid URL") }
-        // perform network request using URLSession
-        let (data, _) = try await URLSession.shared.data(from: url)
-        // decode response using JSONDecoder()
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let response = try decoder.decode(EventsResponse.self, from: data)
-        return response.events
     }
 }
 

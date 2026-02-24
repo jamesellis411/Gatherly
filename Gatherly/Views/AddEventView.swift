@@ -82,7 +82,13 @@ struct AddEventView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    // Put Create Functionality Here
+                    Task {
+                        do {
+                            try await vm.createEvent()
+                        } catch {
+                            print("Failed to create event: \(error)")
+                        }
+                    }
                 }) {
                     Text("Create Event")
                         .font(.title2)

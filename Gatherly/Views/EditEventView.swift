@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PhotosUI
 import SwiftUI
 
 struct EditEventView: View {
@@ -19,15 +20,22 @@ struct EditEventView: View {
                 Text("Change Cover Photo")
                     .font(.title2)
                     .fontWeight(.medium)
-                HStack(alignment: .center) {
-                    Button(action: {
-                        // Implement cover photo functionality
-                    }) {
+                HStack {
+                    PhotosPicker(selection: $vm.selectedPhoto, matching: .images) {
                         Image(systemName: "plus")
-                            .font(.largeTitle)
-                            .padding(25)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 35)
+                            .padding(20)
                             .background(.thinMaterial)
                     }
+                    .task(id: vm.selectedPhoto) {
+                        await vm.loadImage()
+                    }
+                    vm.image?
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 75)
                 }
             }
 
@@ -76,7 +84,13 @@ struct EditEventView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    // Put Save Functionality Here
+                    Task {
+                        do {
+                            try await vm.editEvent()
+                        } catch {
+                            print("Error editing event: \(error)")
+                        }
+                    }
                 }) {
                     Text("Save")
                         .font(.title2)

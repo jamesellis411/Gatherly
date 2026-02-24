@@ -39,4 +39,21 @@ class EventService {
         decoder.dateDecodingStrategy = .iso8601
         return try decoder.decode(Event.self, from: data)
     }
+
+    func editEvent(id: String, title: String, description: String, timestamp: Date, location: String, uiImage: UIImage? = nil) async throws {
+        let path = baseURL.appending(path: "events/\(id)")
+        var request = URLRequest(url: path)
+        request.httpMethod = "PUT"
+        request.httpBody = try JSONEncoder().encode(Event(title: "New Title", location: "New Location", description: "New Description", timestamp: Date(), image: "New Image"))
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        // check status of request
+        if let httpResonse = response as? HTTPURLResponse, httpResonse.statusCode == 200 {
+            print("Event updated successfully!")
+        } else {
+            print("Error updating event!")
+        }
+    }
 }

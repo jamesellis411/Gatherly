@@ -29,6 +29,7 @@ class AddEventViewModel {
     }
 
     var selectedPhoto: PhotosPickerItem?
+    var createdEvent: Event?
 
     func loadImage() async {
         if let data = try? await selectedPhoto?.loadTransferable(type: Data.self) {
@@ -37,10 +38,11 @@ class AddEventViewModel {
         }
     }
 
-    func createEvent() async throws -> Event? {
-        try await EventService.shared.createEvent(title: title,
-                                                  description: description,
-                                                  timestamp: timestamp,
-                                                  location: location)
+    func createEvent() async throws {
+        createdEvent = try await EventService.shared.createEvent(title: title,
+                                                                 description: description,
+                                                                 timestamp: timestamp,
+                                                                 location: location,
+                                                                 uiImage: uiImage)
     }
 }

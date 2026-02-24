@@ -50,10 +50,36 @@ class EventService {
         let (data, response) = try await URLSession.shared.data(for: request)
 
         // check status of request
-        if let httpResonse = response as? HTTPURLResponse, httpResonse.statusCode == 200 {
+        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
             print("Event updated successfully!")
         } else {
             print("Error updating event!")
+        }
+    }
+
+    func deleteEvent(id: String) async throws {
+        // Define URL
+        let path = baseURL.appending(path: "events/\(id)")
+
+        // Create URLRequest and set its method
+        var request = URLRequest(url: path)
+        request.httpMethod = "DELETE"
+
+        // Create and encode a request body
+        let body = ["creatorPid", "730739772"]
+        let encoder = JSONEncoder()
+        let data = try? encoder.encode(body)
+
+        // Set headers
+        request.httpBody = data
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        // Perform request using URLSession
+        let (_, response) = try await URLSession.shared.data(for: request)
+        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+            print("Event successfully deleted!")
+        } else {
+            print("Error deleting event!")
         }
     }
 }

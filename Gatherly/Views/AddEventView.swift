@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PhotosUI
 import SwiftUI
 
 struct AddEventView: View {
@@ -20,15 +21,22 @@ struct AddEventView: View {
                     .font(.title2)
                     .fontWeight(.medium)
 
-                HStack(alignment: .center) {
-                    Button(action: {
-                        // Implement cover photo functionality
-                    }) {
+                HStack {
+                    PhotosPicker(selection: $vm.selectedPhoto, matching: .images) {
                         Image(systemName: "plus")
-                            .font(.largeTitle)
-                            .padding(25)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 35)
+                            .padding(20)
                             .background(.thinMaterial)
                     }
+                    .task(id: vm.selectedPhoto) {
+                        await vm.loadImage()
+                    }
+                    vm.image?
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 75)
                 }
             }
 

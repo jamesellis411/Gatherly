@@ -12,6 +12,7 @@ struct EventDetailView: View {
     let event: Event
     @Environment(\.dismiss) private var dismiss // Syntax for dismiss action in back button
     @State private var isShowingDialog = false
+    @Bindable var vm: EventViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 30) {
@@ -98,7 +99,11 @@ struct EventDetailView: View {
                 EditEventView(vm: EditEventViewModel(event: event))
             }
             Button("Delete Event", role: .destructive) {
-                // Delete action
+                Task {
+                    do {
+                        try await vm.deleteEvent(id: event.id!)
+                    }
+                }
             }
             Button("Cancel", role: .cancel) {
                 isShowingDialog = false
@@ -111,7 +116,7 @@ struct EventDetailView: View {
 
 #Preview {
     NavigationStack {
-        EventDetailView(event: Event.example)
+        EventDetailView(event: Event.example, vm: EventViewModel())
             .preferredColorScheme(ColorScheme.dark)
     }
 }

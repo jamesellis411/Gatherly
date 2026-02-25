@@ -42,7 +42,7 @@ struct HomeView: View {
                 LazyVGrid(columns: columns, spacing: 22) {
                     ForEach(vm.filteredEventIndices, id: \.self) { index in
                         NavigationLink {
-                            EventDetailView(event: vm.events[index])
+                            EventDetailView(event: vm.events[index], vm: vm)
                         } label: {
                             EventCardView(event: vm.events[index])
                         }

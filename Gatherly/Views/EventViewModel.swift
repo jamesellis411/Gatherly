@@ -29,4 +29,8 @@ class EventViewModel {
         let response = try decoder.decode(EventsResponse.self, from: data)
         return response.events
     }
+    
+    func deleteEvent(id: String) async throws {
+        try await EventService.shared.deleteEvent(id: id)
+    }
 }

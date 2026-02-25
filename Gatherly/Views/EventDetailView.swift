@@ -16,9 +16,37 @@ struct EventDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 30) {
-            Image("tempImage")
-                .resizable()
-                .scaledToFit()
+            // check to see if event's image_url property is nil since it's an optional
+            if let imageEvent = event.image_url {
+                // checks to see if image_url is actually a URL
+                if let url = URL(string: imageEvent) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        // when loading, it shows spinner (ProgressView())
+                        case .empty:
+                            ProgressView()
+                        // if loads successfully, shows image, sets it to resizable, and is scaled to Fit
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        // if loading the image fails, show gray box
+                        case .failure:
+                            Rectangle()
+                                .foregroundStyle(.gray)
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    .ignoresSafeArea(edges: .horizontal)
+                }
+            } else {
+                // if no image_url property, placeholder is gray box
+                Rectangle()
+                    .foregroundStyle(.gray)
+            }
+
+            // Question to ask: I'm having trouble with vertically aligned images in this view where they don't fill up the screen correctly. I tried using scaledToFill with a clip instead but that ended up just making the image huge. Any suggestions?
 
             // Event Details
             VStack(alignment: .leading, spacing: 12) {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PhotosUI
 import SwiftUI
 
 struct EditEventView: View {
@@ -19,15 +20,22 @@ struct EditEventView: View {
                 Text("Change Cover Photo")
                     .font(.title2)
                     .fontWeight(.medium)
-                HStack(alignment: .center) {
-                    Button(action: {
-                        // Implement cover photo functionality
-                    }) {
+                HStack {
+                    PhotosPicker(selection: $vm.selectedPhoto, matching: .images) {
                         Image(systemName: "plus")
-                            .font(.largeTitle)
-                            .padding(25)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 35)
+                            .padding(20)
                             .background(.thinMaterial)
                     }
+                    .task(id: vm.selectedPhoto) {
+                        await vm.loadImage()
+                    }
+                    vm.image?
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 75)
                 }
             }
 
@@ -36,7 +44,7 @@ struct EditEventView: View {
                 Text("Event Title")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.title, axis: .vertical)
+                TextField("Enter title here", text: $vm.title, axis: .vertical)
                     .foregroundStyle(.secondary)
                 Divider()
                     .overlay(.gray)
@@ -47,7 +55,7 @@ struct EditEventView: View {
                 Text("Location")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.location, axis: .vertical)
+                TextField("Enter Location here", text: $vm.location, axis: .vertical)
                     .foregroundStyle(.secondary)
                 Divider()
                     .overlay(.gray)
@@ -67,7 +75,7 @@ struct EditEventView: View {
                 Text("Event Description")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.description, axis: .vertical)
+                TextField("Enter event description here", text: $vm.description, axis: .vertical)
                     .foregroundStyle(.secondary)
                 Divider()
                     .overlay(.gray)
@@ -76,7 +84,13 @@ struct EditEventView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    // Put Save Functionality Here
+                    Task {
+                        do {
+                            try await vm.editEvent()
+                        } catch {
+                            print("Error editing event: \(error)")
+                        }
+                    }
                 }) {
                     Text("Save")
                         .font(.title2)
@@ -93,14 +107,10 @@ struct EditEventView: View {
             }
         }
         .padding()
+        .navigationTitle("Edit Event")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("Edit Event")
-                    .fontWeight(.semibold)
-                    .font(.title2)
-            }
             ToolbarItem(placement: .topBarLeading) {
                 Button("Cancel") {
                     dismiss()

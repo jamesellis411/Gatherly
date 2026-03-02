@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PhotosUI
 import SwiftUI
 
 struct AddEventView: View {
@@ -20,15 +21,22 @@ struct AddEventView: View {
                     .font(.title2)
                     .fontWeight(.medium)
 
-                HStack(alignment: .center) {
-                    Button(action: {
-                        // Implement cover photo functionality
-                    }) {
+                HStack {
+                    PhotosPicker(selection: $vm.selectedPhoto, matching: .images) {
                         Image(systemName: "plus")
-                            .font(.largeTitle)
-                            .padding(25)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 35)
+                            .padding(20)
                             .background(.thinMaterial)
                     }
+                    .task(id: vm.selectedPhoto) {
+                        await vm.loadImage()
+                    }
+                    vm.image?
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 75)
                 }
             }
 
@@ -37,7 +45,7 @@ struct AddEventView: View {
                 Text("Event Title")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.title, prompt: Text("Write your event's title"), axis: .vertical)
+                TextField("Write your event's title", text: $vm.title, axis: .vertical)
                 Divider()
                     .overlay(.gray)
             }
@@ -47,7 +55,7 @@ struct AddEventView: View {
                 Text("Location")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.location, prompt: Text("Choose location of event"), axis: .vertical)
+                TextField("Choose location of event", text: $vm.location, axis: .vertical)
                 Divider()
                     .overlay(.gray)
             }
@@ -66,7 +74,7 @@ struct AddEventView: View {
                 Text("Event Description")
                     .font(.title2)
                     .fontWeight(.medium)
-                TextField("", text: $vm.description, prompt: Text("Write a description for your event"), axis: .vertical)
+                TextField("Write a description for your event", text: $vm.description, axis: .vertical)
                 Divider()
                     .overlay(.gray)
             }
@@ -74,7 +82,13 @@ struct AddEventView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    // Put Create Functionality Here
+                    Task {
+                        do {
+                            try await vm.createEvent()
+                        } catch {
+                            print("Failed to create event: \(error)")
+                        }
+                    }
                 }) {
                     Text("Create Event")
                         .font(.title2)
@@ -91,15 +105,10 @@ struct AddEventView: View {
             }
         }
         .padding()
-        .navigationTitle("Edit Event")
+        .navigationTitle("Create Event")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("Create Event")
-                    .fontWeight(.semibold)
-                    .font(.title2)
-            }
             ToolbarItem(placement: .topBarLeading) {
                 Button("Cancel") {
                     dismiss()

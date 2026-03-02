@@ -26,5 +26,3 @@ struct ContentView: View {
     ContentView()
         .preferredColorScheme(.dark)
 }
-
-// Ticket 1 finished!

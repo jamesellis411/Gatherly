@@ -12,6 +12,7 @@ import SwiftUI
 struct EditEventView: View {
     @Environment(\.dismiss) private var dismiss // Dismiss documentation
     @Bindable var vm: EditEventViewModel
+    let event: Event
 
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
@@ -29,13 +30,41 @@ struct EditEventView: View {
                             .padding(20)
                             .background(.thinMaterial)
                     }
-                    .task(id: vm.selectedPhoto) {
-                        await vm.loadImage()
+                    // check to see if event's image_url property is nil since it's an optional
+                    if let imageEvent = event.image_url {
+                        // checks to see if image_url is actually a URL
+                        if let url = URL(string: imageEvent) {
+                            AsyncImage(url: url) { phase in
+                                switch phase {
+                                // when loading, it shows spinner (ProgressView())
+                                case .empty:
+                                    ProgressView()
+                                    
+                                // if loads successfully, shows image, sets it to resizable, and is scaled to Fit
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 75, height: 75)
+                                        .clipped()
+                                // if loading the image fails, show gray box
+                                case .failure:
+                                    Rectangle()
+                                    .foregroundStyle(.gray)
+                                    .scaledToFit()
+                                    .frame(height: 75)
+                                @unknown default:
+                                    EmptyView()
+                                }
+                            }
+                        }
+                    } else {
+                            // if no image_url property, placeholder is gray box
+                            Rectangle()
+                                .foregroundStyle(.gray)
+                                .scaledToFit()
+                                .frame(height: 75)
                     }
-                    vm.image?
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 75)
                 }
             }
 
@@ -122,7 +151,7 @@ struct EditEventView: View {
 
 #Preview {
     NavigationStack {
-        EditEventView(vm: EditEventViewModel(event: Event.example))
+        EditEventView(vm: EditEventViewModel(event: Event.example), event: Event.example)
             .preferredColorScheme(ColorScheme.dark)
     }
 }

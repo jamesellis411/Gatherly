@@ -72,7 +72,7 @@ class EventService {
         request.httpMethod = "DELETE"
 
         // Create and encode a request body
-        let body = ["creatorPid", "730739772"]
+        let body = ["creatorPid": "730739772"]
         let encoder = JSONEncoder()
         let data = try? encoder.encode(body)
 

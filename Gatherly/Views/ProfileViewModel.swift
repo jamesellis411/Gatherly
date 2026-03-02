@@ -7,6 +7,8 @@
 
 import Foundation
 import Observation
+import PhotosUI
+import SwiftUI
 
 @Observable
 class ProfileViewModel {
@@ -20,5 +22,24 @@ class ProfileViewModel {
 
     func filterEvents() {
         // Implement functionality later
+    }
+    
+    var selectedPhoto: PhotosPickerItem?
+    var createdEvent: Event?
+    
+    var base64String: String?
+    var uiImage: UIImage?
+    var image: Image? {
+        if let uiImage = uiImage {
+            return Image(uiImage: uiImage)
+        }
+        return nil
+    }
+
+    func loadImage() async {
+        if let data = try? await selectedPhoto?.loadTransferable(type: Data.self) {
+            let uiImage = UIImage(data: data)
+            self.uiImage = uiImage
+        }
     }
 }

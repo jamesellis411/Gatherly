@@ -13,32 +13,33 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                HStack {
-                    Button(action: {
-                        // Add functionality later
-                    }) {
-                        Text("Sort by")
-                            .padding(8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(.white, lineWidth: 2)
-                            )
-                    }
+            HStack {
+                Button(action: {
+                    // Add functionality later
+                }) {
+                    Text("Sort by")
+                        .padding(8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(.primary, lineWidth: 2)
+                        )
+                }
 
-                    Spacer()
-                    NavigationLink {
-                        AddEventView(vm: AddEventViewModel())
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "plus")
-                            Text("Create Event")
-                        }
+                Spacer()
+                NavigationLink {
+                    AddEventView(vm: AddEventViewModel())
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "plus")
+                        Text("Create Event")
                     }
                 }
-                .padding(7)
-                .foregroundStyle(.white)
+            }
+            .padding(.horizontal, 25)
+            .padding(.vertical, 8)
+            .buttonStyle(.plain)
 
+            ScrollView {
                 LazyVGrid(columns: columns, spacing: 22) {
                     ForEach(vm.filteredEventIndices, id: \.self) { index in
                         NavigationLink {

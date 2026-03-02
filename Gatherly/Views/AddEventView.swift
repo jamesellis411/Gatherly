@@ -85,6 +85,7 @@ struct AddEventView: View {
                     Task {
                         do {
                             try await vm.createEvent()
+                            dismiss() // On success, dismiss view, returning to HomeView
                         } catch {
                             print("Failed to create event: \(error)")
                         }

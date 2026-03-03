@@ -41,13 +41,11 @@ struct AddEventView: View {
                                     .padding(20)
                                     .background(.thinMaterial)
                             }
-                            .task(id: vm.selectedPhoto) {
-                                await vm.loadImage()
-                            }
                             vm.image?
                                 .resizable()
-                                .scaledToFit()
-                                .frame(height: 75)
+                                .scaledToFill()
+                                .frame(width: 75, height: 75)
+                                .clipped()
                         }
                     }
 
@@ -128,6 +126,10 @@ struct AddEventView: View {
                     }
                 }
             }
+            
+        }
+        .task(id: vm.selectedPhoto) {
+            await vm.loadImage()
         }
         .alert("Error", isPresented: $vm.isError) {
             Button("Try Again") {

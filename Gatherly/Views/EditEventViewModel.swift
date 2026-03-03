@@ -51,8 +51,8 @@ class EditEventViewModel {
             if let data = try await selectedPhoto?.loadTransferable(type: Data.self) {
                 let uiImage = UIImage(data: data)
                 self.uiImage = uiImage
-                loadingState = .success
             }
+            loadingState = .success
         } catch let error as ErrorType {
             loadingState = .failed(error)
             isError = true

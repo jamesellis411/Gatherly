@@ -20,14 +20,27 @@ class EventViewModel {
 
     func fetchEvents() async throws -> [Event] {
         // define url
-        guard let url = URL(string: "https://gatherly-backend-q9vm.onrender.com/events") else { fatalError("Invalid URL") }
-        // perform network request using URLSession
-        let (data, _) = try await URLSession.shared.data(from: url)
-        // decode response using JSONDecoder()
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let response = try decoder.decode(EventsResponse.self, from: data)
-        return response.events
+        guard let url = URL(string: "https://gatherly-backend-q9vm.onrender.com/events") else {
+            throw ErrorType.invalidURL
+        }
+        
+        do {
+            // perform network request using URLSession
+            let (data, _) = try await URLSession.shared.data(from: url)
+            
+            // decode response using JSONDecoder()
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            
+            guard let response = try? decoder.decode(EventsResponse.self, from: data) else {
+                throw ErrorType.codingError
+            }
+            return response.events
+        } catch is URLError {
+            throw ErrorType.networkError
+        } catch {
+            throw ErrorType.unknown
+        }
     }
     
     func deleteEvent(id: String) async throws {

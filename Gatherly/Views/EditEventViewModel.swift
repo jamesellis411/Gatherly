@@ -32,7 +32,9 @@ class EditEventViewModel {
     var selectedPhoto: PhotosPickerItem?
     
     var loadingState: LoadingState = .idle
-
+    var isError: Bool = false
+    var errorString: String = ""
+    
     init(event: Event) {
         self.id = event.id
         self.creatorPid = event.creatorPid
@@ -53,8 +55,12 @@ class EditEventViewModel {
             }
         } catch let error as ErrorType {
             loadingState = .failed(error)
+            isError = true
+            errorString = error.localizedDescription
         } catch {
             loadingState = .failed(.unknown)
+            isError = true
+            errorString = error.localizedDescription
         }
     }
 

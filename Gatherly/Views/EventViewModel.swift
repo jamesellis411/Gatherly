@@ -18,6 +18,8 @@ class EventViewModel {
             searchText.isEmpty || events[i].title.localizedCaseInsensitiveContains(searchText)
         }
     }
+    var errorString: String = ""
+    var isError: Bool = false
     
     func fetchEvents() async {
         loadingState = .loading
@@ -27,8 +29,12 @@ class EventViewModel {
             loadingState = .success
         } catch let error as ErrorType {
             loadingState = .failed(error)
+            isError = true
+            errorString = error.localizedDescription
         } catch {
             loadingState = .failed(.unknown)
+            isError = true
+            errorString = error.localizedDescription
         }
     }
     

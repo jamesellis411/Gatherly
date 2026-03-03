@@ -32,6 +32,8 @@ class AddEventViewModel {
     var createdEvent: Event?
     
     var loadingState: LoadingState = .idle
+    var isError: Bool = false
+    var errorString: String = ""
 
     func loadImage() async {
         loadingState = .loading
@@ -43,8 +45,12 @@ class AddEventViewModel {
             }
         } catch let error as ErrorType{
             loadingState = .failed(error)
+            isError = true
+            errorString = error.localizedDescription
         } catch {
             loadingState = .failed(.unknown)
+            isError = true
+            errorString = error.localizedDescription
         }
     }
 

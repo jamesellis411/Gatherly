@@ -42,7 +42,7 @@ struct EditEventView: View {
                                     .background(.thinMaterial)
                             }
                             
-                            // checks t
+                            // Prioritize newly selected photo
                             if let image = vm.image {
                                 image
                                     .resizable()

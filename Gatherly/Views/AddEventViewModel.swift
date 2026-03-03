@@ -30,11 +30,21 @@ class AddEventViewModel {
 
     var selectedPhoto: PhotosPickerItem?
     var createdEvent: Event?
+    
+    var loadingState: LoadingState = .idle
 
     func loadImage() async {
-        if let data = try? await selectedPhoto?.loadTransferable(type: Data.self) {
-            let uiImage = UIImage(data: data)
-            self.uiImage = uiImage
+        loadingState = .loading
+        do {
+            if let data = try await selectedPhoto?.loadTransferable(type: Data.self) {
+                let uiImage = UIImage(data: data)
+                self.uiImage = uiImage
+                loadingState = .success
+            }
+        } catch let error as ErrorType{
+            loadingState = .failed(error)
+        } catch {
+            loadingState = .failed(.unknown)
         }
     }
 

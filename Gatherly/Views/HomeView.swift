@@ -54,11 +54,7 @@ struct HomeView: View {
             .padding(.horizontal, 18)
             .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
             .task {
-                do {
-                    vm.events = try await vm.fetchEvents()
-                } catch {
-                    print("there was an error: \(error.localizedDescription)")
-                }
+                await vm.fetchEvents()
             }
         }
     }

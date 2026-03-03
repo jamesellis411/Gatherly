@@ -14,6 +14,7 @@ import SwiftUI
 class ProfileViewModel {
     let tabs = ["RSVP'd", "Past Events"]
     var selectedTab: String = "RSVP'd"
+    var loadingState: LoadingState = .idle
 
     func selectTab(tab: String) {
         selectedTab = tab
@@ -37,9 +38,17 @@ class ProfileViewModel {
     }
 
     func loadImage() async {
-        if let data = try? await selectedPhoto?.loadTransferable(type: Data.self) {
-            let uiImage = UIImage(data: data)
-            self.uiImage = uiImage
+        loadingState = .loading
+        do {
+            if let data = try await selectedPhoto?.loadTransferable(type: Data.self) {
+                let uiImage = UIImage(data: data)
+                self.uiImage = uiImage
+                loadingState = .success
+            }
+        } catch let error as ErrorType {
+            loadingState = .failed(error)
+        } catch {
+            loadingState = .failed(.unknown)
         }
     }
 }

@@ -41,8 +41,15 @@ struct EditEventView: View {
                                     .padding(20)
                                     .background(.thinMaterial)
                             }
-                            // check to see if event's image_url property is nil since it's an optional
-                            if let imageEvent = event.image_url {
+                            
+                            // checks t
+                            if let image = vm.image {
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 75, height: 75)
+                                    .clipped()
+                            } else if let imageEvent = event.image_url { // check to see if event's image_url property is nil since it's an optional
                                 // checks to see if image_url is actually a URL
                                 if let url = URL(string: imageEvent) {
                                     AsyncImage(url: url) { phase in
@@ -51,7 +58,7 @@ struct EditEventView: View {
                                         case .empty:
                                             ProgressView()
                                             
-                                        // if loads successfully, shows image, sets it to resizable, and is scaled to Fit
+                                        // if loads successfully, shows image, sets it to resizable, and is scaled to fill
                                         case .success(let image):
                                             image
                                                 .resizable()
@@ -70,11 +77,11 @@ struct EditEventView: View {
                                     }
                                 }
                             } else {
-                                    // if no image_url property, placeholder is gray box
-                                    Rectangle()
-                                        .foregroundStyle(.gray)
-                                        .scaledToFit()
-                                        .frame(height: 75)
+                                // if no image_url property, placeholder is gray box
+                                Rectangle()
+                                    .foregroundStyle(.gray)
+                                    .scaledToFit()
+                                    .frame(height: 75)
                             }
                         }
                     }
@@ -159,6 +166,9 @@ struct EditEventView: View {
                     }
                 }
             }
+        }
+        .task(id: vm.selectedPhoto) {
+            await vm.loadImage()
         }
         .alert("Error", isPresented: $vm.isError){
             Button("Try Again") {

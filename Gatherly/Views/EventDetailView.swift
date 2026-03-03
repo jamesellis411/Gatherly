@@ -46,8 +46,6 @@ struct EventDetailView: View {
                     .foregroundStyle(.gray)
             }
 
-            // Question to ask: I'm having trouble with vertically aligned images in this view where they don't fill up the screen correctly. I tried using scaledToFill with a clip instead but that ended up just making the image huge. Any suggestions?
-
             // Event Details
             VStack(alignment: .leading, spacing: 8) {
                 Text(event.title)

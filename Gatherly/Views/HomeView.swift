@@ -39,23 +39,34 @@ struct HomeView: View {
             .padding(.vertical, 8)
             .buttonStyle(.plain)
 
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 22) {
-                    ForEach(vm.filteredEventIndices, id: \.self) { index in
-                        NavigationLink {
-                            EventDetailView(event: vm.events[index], vm: vm)
-                        } label: {
-                            EventCardView(event: vm.events[index])
+            switch vm.loadingState {
+            case .loading:
+                ProgressView("Loading events...")
+            case .failed(let errorType):
+                ContentUnavailableView {
+                    Label("Something went wrong", systemImage: "x.circle.fill")
+                } description: {
+                    Text(errorType.localizedDescription)
+                }
+            case .idle, .success:
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 22) {
+                        ForEach(vm.filteredEventIndices, id: \.self) { index in
+                            NavigationLink {
+                                EventDetailView(event: vm.events[index], vm: vm)
+                            } label: {
+                                EventCardView(event: vm.events[index])
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
+                .padding(.horizontal, 18)
+                .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
             }
-            .padding(.horizontal, 18)
-            .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
-            .task {
-                await vm.fetchEvents()
-            }
+        }
+        .task {
+            await vm.fetchEvents()
         }
     }
 }

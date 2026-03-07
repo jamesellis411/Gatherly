@@ -45,6 +45,14 @@ struct EventMapView: View {
                     print("Failed to geocode addresses: \(error.localizedDescription)")
                 }
             }
+            .alert("Error", isPresented: $vm.isError) {
+                Button("Try Again") {
+                    Task{ try await vm.load()}
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(vm.errorString)
+            }
             .sheet(item: $selectedEvent) { event in
                 MapDetailView(event: event)
             }

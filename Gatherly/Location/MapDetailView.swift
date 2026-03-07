@@ -27,7 +27,6 @@ struct MapDetailView: View {
                             image
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 400)
                         // if loading the image fails, show gray box
                         case .failure:
                             Rectangle()

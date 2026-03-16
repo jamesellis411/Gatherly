@@ -5,6 +5,7 @@
 //  Created by James Ellis on 2/5/26.
 //
 import Foundation
+import CoreLocation
 
 struct Event: Hashable, Codable, Identifiable {
     var id: String?
@@ -25,4 +26,10 @@ extension Event {
             description: "Join fellow students for a night of collaborative coding, snacks, and fun.",
             timestamp: Date()
         )
+}
+
+struct EventAnnotation: Identifiable {
+    var id: String
+    var event: Event
+    var coordinate: CLLocationCoordinate2D
 }

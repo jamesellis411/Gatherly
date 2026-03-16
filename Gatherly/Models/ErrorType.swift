@@ -10,6 +10,7 @@ enum ErrorType: LocalizedError {
     case networkError
     case codingError
     case invalidURL
+    case geocodeError
     case unknown
 
     var errorDescription: String? {
@@ -20,6 +21,8 @@ enum ErrorType: LocalizedError {
             return "Failed to encode/decode data."
         case .invalidURL:
             return "The URL provided is invalid."
+        case .geocodeError:
+            return "Failed to geocode addresses."
         case .unknown:
             return "An unknown error occurred."
         }

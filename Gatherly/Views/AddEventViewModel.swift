@@ -36,14 +36,30 @@ class AddEventViewModel {
     var errorString: String = ""
 
     func loadImage() async {
-        loadingState = .loading
         do {
             if let data = try await selectedPhoto?.loadTransferable(type: Data.self) {
                 let uiImage = UIImage(data: data)
                 self.uiImage = uiImage
             }
-            loadingState = .success
         } catch let error as ErrorType{
+            isError = true
+            errorString = error.localizedDescription
+        } catch {
+            isError = true
+            errorString = error.localizedDescription
+        }
+    }
+
+    func createEvent() async {
+        loadingState = .loading
+        do {
+            createdEvent = try await EventService.shared.createEvent(title: title,
+                                                                     description: description,
+                                                                     timestamp: timestamp,
+                                                                     location: location,
+                                                                     uiImage: uiImage)
+            loadingState = .success
+        } catch let error as ErrorType {
             loadingState = .failed(error)
             isError = true
             errorString = error.localizedDescription
@@ -52,13 +68,5 @@ class AddEventViewModel {
             isError = true
             errorString = error.localizedDescription
         }
-    }
-
-    func createEvent() async throws {
-        createdEvent = try await EventService.shared.createEvent(title: title,
-                                                                 description: description,
-                                                                 timestamp: timestamp,
-                                                                 location: location,
-                                                                 uiImage: uiImage)
     }
 }

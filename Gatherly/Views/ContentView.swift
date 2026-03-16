@@ -13,12 +13,20 @@ struct ContentView: View {
             HomeView()
                 .tabItem {
                     Image(systemName: "house")
+                    Text("Home")
+                }
+            EventMapView()
+                .tabItem {
+                    Image(systemName: "map")
+                    Text("Map")
                 }
             ProfileView(vm: ProfileViewModel())
                 .tabItem {
                     Image(systemName: "person.fill")
+                    Text("Profile")
                 }
         }
+        .tint(.cyan)
     }
 }
 

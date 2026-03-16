@@ -23,7 +23,10 @@ class EventService {
     func fetchEvents() async throws -> [Event] {
         do {
             // perform network request using URLSession
-            let (data, _) = try await URLSession.shared.data(from: self.baseURL)
+            guard let path = URL(string: "\(baseURL)events") else {
+                throw ErrorType.invalidURL
+            }
+            let (data, _) = try await URLSession.shared.data(from: path)
             
             // decode response using JSONDecoder()
             let decoder = JSONDecoder()

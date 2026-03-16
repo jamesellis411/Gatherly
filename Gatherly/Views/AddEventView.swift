@@ -93,10 +93,10 @@ struct AddEventView: View {
                         Button(action: {
                             Task {
                                 do {
-                                    try await vm.createEvent()
-                                    dismiss() // On success, dismiss view, returning to HomeView
-                                } catch {
-                                    print("Failed to create event: \(error)")
+                                    await vm.createEvent()
+                                    if case .success = vm.loadingState {
+                                        dismiss() // On success, dismiss view, returning to HomeView
+                                    }
                                 }
                             }
                         }) {
@@ -131,15 +131,13 @@ struct AddEventView: View {
         .task(id: vm.selectedPhoto) {
             await vm.loadImage()
         }
-        .alert("Error", isPresented: $vm.isError) {
+        .alert(vm.errorString, isPresented: $vm.isError) {
             Button("Try Again") {
                 Task {
-                    try await vm.createEvent()
+                    await vm.createEvent()
                 }
             }
             Button("Cancel", role: .cancel){}
-        } message: {
-            Text(vm.errorString)
         }
     }
 }

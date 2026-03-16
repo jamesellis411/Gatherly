@@ -11,23 +11,31 @@ import Observation
 @Observable
 class EventViewModel {
     var events: [Event] = []
+    var loadingState: LoadingState = .idle
     var searchText = ""
     var filteredEventIndices: [Int] {
         events.indices.filter { i in
             searchText.isEmpty || events[i].title.localizedCaseInsensitiveContains(searchText)
         }
     }
-
-    func fetchEvents() async throws -> [Event] {
-        // define url
-        guard let url = URL(string: "https://gatherly-backend-q9vm.onrender.com/events") else { fatalError("Invalid URL") }
-        // perform network request using URLSession
-        let (data, _) = try await URLSession.shared.data(from: url)
-        // decode response using JSONDecoder()
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let response = try decoder.decode(EventsResponse.self, from: data)
-        return response.events
+    var errorString: String = ""
+    var isError: Bool = false
+    
+    func fetchEvents() async {
+        loadingState = .loading
+        do {
+            let fetched = try await EventService.shared.fetchEvents()
+            events = fetched
+            loadingState = .success
+        } catch let error as ErrorType {
+            loadingState = .failed(error)
+            isError = true
+            errorString = error.localizedDescription
+        } catch {
+            loadingState = .failed(.unknown)
+            isError = true
+            errorString = error.localizedDescription
+        }
     }
     
     func deleteEvent(id: String) async throws {

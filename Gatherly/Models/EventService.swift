@@ -11,8 +11,39 @@ import UIKit
 
 @Observable
 class EventService {
-    static let shared: EventService = .init()
-    let baseURL: URL = .init(string: "https://gatherly-backend-q9vm.onrender.com/")!
+    static let shared = try! EventService() // force-unwrap bc init only throws once
+    private let baseURL: URL
+    private init() throws {
+        guard let url = URL(string: "https://gatherly-backend-q9vm.onrender.com/") else {
+            throw ErrorType.invalidURL
+        }
+        self.baseURL = url
+    }
+    
+    func fetchEvents() async throws -> [Event] {
+        // define url
+        guard let url = URL(string: "https://gatherly-backend-q9vm.onrender.com/events") else {
+            throw ErrorType.invalidURL
+        }
+        
+        do {
+            // perform network request using URLSession
+            let (data, _) = try await URLSession.shared.data(from: url)
+            
+            // decode response using JSONDecoder()
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            
+            guard let response = try? decoder.decode(EventsResponse.self, from: data) else {
+                throw ErrorType.codingError
+            }
+            return response.events
+        } catch is URLError {
+            throw ErrorType.networkError
+        } catch {
+            throw ErrorType.unknown
+        }
+    }
 
     func createEvent(title: String, description: String, timestamp: Date, location: String, uiImage: UIImage? = nil) async throws -> Event? {
         let path = baseURL.appending(path: "events")
@@ -27,17 +58,35 @@ class EventService {
         let body = Event(title: title, location: location, description: description, timestamp: timestamp, image: imageString)
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        request.httpBody = try encoder.encode(body)
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
-            print("Failed to create event")
-            return nil
+        do {
+            request.httpBody = try encoder.encode(body)
+        } catch {
+            throw ErrorType.codingError
         }
-
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        return try decoder.decode(Event.self, from: data)
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw ErrorType.networkError
+            }
+            
+            guard httpResponse.statusCode == 201 else {
+                throw ErrorType.networkError
+            }
+            
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            do {
+                let createdEvent = try decoder.decode(Event.self, from: data)
+                return createdEvent
+            } catch {
+                throw ErrorType.codingError
+            }
+        } catch is URLError {
+            throw ErrorType.networkError
+        } catch {
+            throw ErrorType.unknown
+        }
     }
 
     func editEvent(id: String, title: String, description: String, timestamp: Date, location: String, uiImage: UIImage? = nil) async throws {
@@ -53,13 +102,25 @@ class EventService {
         let body = Event(title: title, location: location, description: description, timestamp: timestamp, image: imageString)
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        request.httpBody = try encoder.encode(body)
-
-        let (_, response) = try await URLSession.shared.data(for: request)
-        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-            print("Event updated successfully!")
-        } else {
-            print("Error updating event!")
+        do {
+            request.httpBody = try encoder.encode(body)
+        } catch {
+            throw ErrorType.codingError
+        }
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw ErrorType.networkError
+            }
+            
+            guard httpResponse.statusCode == 200 else {
+                throw ErrorType.networkError
+            }
+        } catch is URLError {
+            throw ErrorType.networkError
+        } catch {
+            throw ErrorType.unknown
         }
     }
 
@@ -72,20 +133,30 @@ class EventService {
         request.httpMethod = "DELETE"
 
         // Create and encode a request body
-        let body = ["creatorPid", "730739772"]
+        let body = ["creatorPid": "730739772"]
         let encoder = JSONEncoder()
-        let data = try? encoder.encode(body)
-
-        // Set headers
-        request.httpBody = data
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // Perform request using URLSession
-        let (_, response) = try await URLSession.shared.data(for: request)
-        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-            print("Event successfully deleted!")
-        } else {
-            print("Error deleting event!")
+        
+        do {
+            guard let data = try? encoder.encode(body) else {
+                throw ErrorType.codingError
+            }
+            // Set headers
+            request.httpBody = data
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            // Perform request using URLSession
+            let (_, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw ErrorType.networkError
+            }
+            
+            guard httpResponse.statusCode == 200 else {
+                throw ErrorType.networkError
+            }
+        } catch is URLError{
+            throw ErrorType.networkError
+        } catch {
+            throw ErrorType.unknown
         }
     }
 }

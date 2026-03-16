@@ -15,7 +15,7 @@ struct EventDetailView: View {
     @Bindable var vm: EventViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 30) {
+        VStack(spacing: 30) {
             // check to see if event's image_url property is nil since it's an optional
             if let imageEvent = event.image_url {
                 // checks to see if image_url is actually a URL
@@ -46,10 +46,8 @@ struct EventDetailView: View {
                     .foregroundStyle(.gray)
             }
 
-            // Question to ask: I'm having trouble with vertically aligned images in this view where they don't fill up the screen correctly. I tried using scaledToFill with a clip instead but that ended up just making the image huge. Any suggestions?
-
             // Event Details
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(event.title)
                     .font(.title)
                     .fontWeight(.semibold)
@@ -74,13 +72,14 @@ struct EventDetailView: View {
             .padding(.horizontal, 10)
 
             // Event Description
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Description")
                     .font(.title3)
                 Text(event.description)
                     .foregroundStyle(.secondary)
                     .font(.title3)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 10)
 
             HStack {
@@ -124,7 +123,7 @@ struct EventDetailView: View {
         }
         .confirmationDialog("Advanced Actions", isPresented: $isShowingDialog, titleVisibility: .visible) {
             NavigationLink("Edit Event") {
-                EditEventView(vm: EditEventViewModel(event: event))
+                EditEventView(vm: EditEventViewModel(event: event), event: event)
             }
             Button("Delete Event", role: .destructive) {
                 Task {

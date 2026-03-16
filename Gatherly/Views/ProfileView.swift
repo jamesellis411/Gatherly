@@ -10,23 +10,37 @@ import PhotosUI
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var selectedPhoto: PhotosPickerItem?
     @Bindable var vm: ProfileViewModel
     var body: some View {
         VStack {
             // PhotosPicker and Name
             HStack {
                 VStack(spacing: 12) {
-                    PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                    PhotosPicker(selection: $vm.selectedPhoto, matching: .images) {
                         Circle()
                             .foregroundStyle(.regularMaterial)
                             .frame(width: 107, height: 107)
                             .overlay(
-                                Image(systemName: "plus")
-                                    .foregroundStyle(.cyan)
-                                    .font(.system(size: 45))
+                                Group { // have to use Group in .overlay() to resolve if/else logic into a singular view per documentation
+                                    if let image = vm.image { // vm.image set or nil
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                            .clipShape(Circle())
+                                    } else {
+                                        Image(systemName: "plus")
+                                            .foregroundStyle(.cyan)
+                                            .font(.largeTitle)
+                                    }
+                                }
                             )
                     }
+                    .onChange(of: vm.selectedPhoto) { // use onChange to trigger call to vm
+                        Task {
+                            await vm.loadImage()
+                        }
+                    }
+
                     Text("James Ellis") // Hardcoded for now
                         .fontWeight(.semibold)
                 }

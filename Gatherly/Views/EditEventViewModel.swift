@@ -30,7 +30,11 @@ class EditEventViewModel {
     }
 
     var selectedPhoto: PhotosPickerItem?
-
+    
+    var loadingState: LoadingState = .idle
+    var isError: Bool = false
+    var errorString: String = ""
+    
     init(event: Event) {
         self.id = event.id
         self.creatorPid = event.creatorPid
@@ -42,9 +46,21 @@ class EditEventViewModel {
     }
 
     func loadImage() async {
-        if let data = try? await selectedPhoto?.loadTransferable(type: Data.self) {
-            let uiImage = UIImage(data: data)
-            self.uiImage = uiImage
+        loadingState = .loading
+        do {
+            if let data = try await selectedPhoto?.loadTransferable(type: Data.self) {
+                let uiImage = UIImage(data: data)
+                self.uiImage = uiImage
+            }
+            loadingState = .success
+        } catch let error as ErrorType {
+            loadingState = .failed(error)
+            isError = true
+            errorString = error.localizedDescription
+        } catch {
+            loadingState = .failed(.unknown)
+            isError = true
+            errorString = error.localizedDescription
         }
     }
 

@@ -13,52 +13,68 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                HStack {
-                    Button(action: {
-                        // Add functionality later
-                    }) {
-                        Text("Sort by")
-                            .padding(8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(.white, lineWidth: 2)
-                            )
-                    }
-
-                    Spacer()
-                    NavigationLink {
-                        AddEventView(vm: AddEventViewModel())
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "plus")
-                            Text("Create Event")
-                        }
-                    }
+            HStack {
+                Button(action: {
+                    // Add functionality later
+                }) {
+                    Text("Sort by")
+                        .padding(8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(.primary, lineWidth: 2)
+                        )
                 }
-                .padding(7)
-                .foregroundStyle(.white)
 
-                LazyVGrid(columns: columns, spacing: 22) {
-                    ForEach(vm.filteredEventIndices, id: \.self) { index in
-                        NavigationLink {
-                            EventDetailView(event: vm.events[index], vm: vm)
-                        } label: {
-                            EventCardView(event: vm.events[index])
-                        }
-                        .buttonStyle(.plain)
+                Spacer()
+                NavigationLink {
+                    AddEventView(vm: AddEventViewModel())
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "plus")
+                        Text("Create Event")
                     }
                 }
             }
-            .padding(.horizontal, 18)
-            .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
-            .task {
-                do {
-                    vm.events = try await vm.fetchEvents()
-                } catch {
-                    print("there was an error: \(error.localizedDescription)")
+            .padding(.horizontal, 25)
+            .padding(.vertical, 8)
+            .buttonStyle(.plain)
+
+            switch vm.loadingState {
+            case .loading:
+                ProgressView("Loading events...")
+            case .failed(let errorType):
+                ContentUnavailableView {
+                    Label("Something went wrong", systemImage: "x.circle.fill")
+                } description: {
+                    Text(errorType.localizedDescription)
                 }
+            case .idle, .success:
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 22) {
+                        ForEach(vm.filteredEventIndices, id: \.self) { index in
+                            NavigationLink {
+                                EventDetailView(event: vm.events[index], vm: vm)
+                            } label: {
+                                EventCardView(event: vm.events[index])
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .padding(.horizontal, 18)
+                .searchable(text: $vm.searchText, placement: .navigationBarDrawer(displayMode: .always))
             }
+        }
+        .task {
+            await vm.fetchEvents()
+        }
+        .alert("Error", isPresented: $vm.isError) {
+            Button("Try Again") {
+                Task{ await vm.fetchEvents()}
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(vm.errorString)
         }
     }
 }

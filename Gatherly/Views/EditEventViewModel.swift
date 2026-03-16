@@ -46,12 +46,24 @@ class EditEventViewModel {
     }
 
     func loadImage() async {
-        loadingState = .loading
         do {
             if let data = try await selectedPhoto?.loadTransferable(type: Data.self) {
                 let uiImage = UIImage(data: data)
                 self.uiImage = uiImage
             }
+        } catch let error as ErrorType {
+            isError = true
+            errorString = error.localizedDescription
+        } catch {
+            isError = true
+            errorString = error.localizedDescription
+        }
+    }
+
+    func editEvent() async {
+        loadingState = .loading
+        do {
+            try await EventService.shared.editEvent(id: id!, title: title, description: description, timestamp: timestamp, location: location)
             loadingState = .success
         } catch let error as ErrorType {
             loadingState = .failed(error)
@@ -62,9 +74,5 @@ class EditEventViewModel {
             isError = true
             errorString = error.localizedDescription
         }
-    }
-
-    func editEvent() async throws {
-        try await EventService.shared.editEvent(id: id!, title: title, description: description, timestamp: timestamp, location: location)
     }
 }

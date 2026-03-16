@@ -68,13 +68,11 @@ struct HomeView: View {
         .task {
             await vm.fetchEvents()
         }
-        .alert("Error", isPresented: $vm.isError) {
+        .alert(vm.errorString, isPresented: $vm.isError) {
             Button("Try Again") {
                 Task{ await vm.fetchEvents()}
             }
             Button("Cancel", role: .cancel) {}
-        } message: {
-            Text(vm.errorString)
         }
     }
 }

@@ -21,14 +21,9 @@ class EventService {
     }
     
     func fetchEvents() async throws -> [Event] {
-        // define url
-        guard let url = URL(string: "https://gatherly-backend-q9vm.onrender.com/events") else {
-            throw ErrorType.invalidURL
-        }
-        
         do {
             // perform network request using URLSession
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, _) = try await URLSession.shared.data(from: self.baseURL)
             
             // decode response using JSONDecoder()
             let decoder = JSONDecoder()
@@ -46,7 +41,9 @@ class EventService {
     }
 
     func createEvent(title: String, description: String, timestamp: Date, location: String, uiImage: UIImage? = nil) async throws -> Event? {
-        let path = baseURL.appending(path: "events")
+        guard let path = URL(string: "\(baseURL)events") else {
+            throw ErrorType.invalidURL
+        }
         var imageString = ""
         if let image = uiImage, let data = image.jpegData(compressionQuality: 0.8) {
             imageString = "data:image/jpeg;base64,\(data.base64EncodedString())"
@@ -90,7 +87,9 @@ class EventService {
     }
 
     func editEvent(id: String, title: String, description: String, timestamp: Date, location: String, uiImage: UIImage? = nil) async throws {
-        let path = baseURL.appending(path: "events/\(id)")
+        guard let path = URL(string: "\(baseURL)events/\(id)") else {
+            throw ErrorType.invalidURL
+        }
         var imageString = ""
         if let image = uiImage, let data = image.jpegData(compressionQuality: 0.8) {
             imageString = "data:image/jpeg;base64,\(data.base64EncodedString())"
@@ -126,7 +125,9 @@ class EventService {
 
     func deleteEvent(id: String) async throws {
         // Define URL
-        let path = baseURL.appending(path: "events/\(id)")
+        guard let path = URL(string: "\(baseURL)events/\(id)") else {
+            throw ErrorType.invalidURL
+        }
 
         // Create URLRequest and set its method
         var request = URLRequest(url: path)

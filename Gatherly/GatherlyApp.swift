@@ -5,8 +5,8 @@
 //  Created by James Ellis on 2/5/26.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @main
 struct GatherlyApp: App {
@@ -14,6 +14,6 @@ struct GatherlyApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: RSVPedEvent.self)
+        .modelContainer(for: [RSVPedEvent.self, UserProfile.self])
     }
 }

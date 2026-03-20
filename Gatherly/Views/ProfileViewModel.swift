@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import PhotosUI
 import SwiftUI
+import SwiftData
 
 @Observable
 class ProfileViewModel {
@@ -37,12 +38,14 @@ class ProfileViewModel {
         return nil
     }
 
-    func loadImage() async {
+    func loadImage(profile: UserProfile, modelContext: ModelContext) async {
         loadingState = .loading
         do {
             if let data = try await selectedPhoto?.loadTransferable(type: Data.self) {
                 let uiImage = UIImage(data: data)
                 self.uiImage = uiImage
+                profile.imageData = data
+                try? modelContext.save()
             }
             loadingState = .success
         } catch let error as ErrorType {

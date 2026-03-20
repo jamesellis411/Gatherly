@@ -14,7 +14,18 @@ struct ProfileView: View {
     @Bindable var vm: ProfileViewModel
     @Query var upcomingEvents: [RSVPedEvent]
     @Query var pastEvents: [RSVPedEvent]
+    @Query var userProfiles: [UserProfile]
     @Environment(\.modelContext) private var modelContext
+
+    var profile: UserProfile {
+        if let first = userProfiles.first {
+            return first
+        } else {
+            let tempProfile = UserProfile()
+            modelContext.insert(tempProfile)
+            return tempProfile
+        }
+    }
 
     /// Build queries at runtime to use Date.now and accept a view model
     init(vm: ProfileViewModel) {
@@ -49,6 +60,11 @@ struct ProfileView: View {
                                             .resizable()
                                             .scaledToFill()
                                             .clipShape(Circle())
+                                    } else if let data = profile.imageData, let uiImage = UIImage(data: data) {
+                                        Image(uiImage: uiImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .clipShape(Circle())
                                     } else {
                                         Image(systemName: "plus")
                                             .foregroundStyle(.cyan)
@@ -59,7 +75,7 @@ struct ProfileView: View {
                     }
                     .onChange(of: vm.selectedPhoto) { // use onChange to trigger call to vm
                         Task {
-                            await vm.loadImage()
+                            await vm.loadImage(profile: profile, modelContext: modelContext)
                         }
                     }
 

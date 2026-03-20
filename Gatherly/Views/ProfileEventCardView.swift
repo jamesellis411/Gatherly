@@ -49,7 +49,7 @@ struct ProfileEventCardView: View {
                     .frame(width: 80, height: 81)
                     .cornerRadius(10)
             }
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(event.title)
                     .font(.subheadline)
@@ -67,8 +67,6 @@ struct ProfileEventCardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.thickMaterial)
         .cornerRadius(10)
-        .padding(20)
-
     }
 }
 

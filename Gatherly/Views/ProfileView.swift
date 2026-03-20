@@ -14,6 +14,7 @@ struct ProfileView: View {
     @Bindable var vm: ProfileViewModel
     @Query var upcomingEvents: [RSVPedEvent]
     @Query var pastEvents: [RSVPedEvent]
+    @Environment(\.modelContext) private var modelContext
 
     /// Build queries at runtime to use Date.now and accept a view model
     init(vm: ProfileViewModel) {
@@ -88,37 +89,48 @@ struct ProfileView: View {
             }
             .padding()
 
-            ScrollView {
-                LazyVStack(spacing: 10) {
-                    if vm.selectedTab == "RSVP'd" {
-                        ForEach(upcomingEvents, id: \.id) { event in
-                            ProfileEventCardView(event: Event(
-                                id: event.id,
-                                creatorPid: event.creatorPid,
-                                title: event.title,
-                                location: event.location,
-                                description: event.eventDescription,
-                                timestamp: event.timestamp,
-                                image_url: event.image_url
-                            ))
-                            .padding(.horizontal, 16)
+            List {
+                if vm.selectedTab == "RSVP'd" {
+                    ForEach(upcomingEvents, id: \.id) { event in
+                        ProfileEventCardView(event: Event(
+                            id: event.id,
+                            creatorPid: event.creatorPid,
+                            title: event.title,
+                            location: event.location,
+                            description: event.eventDescription,
+                            timestamp: event.timestamp,
+                            image_url: event.image_url
+                        ))
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    }
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            modelContext.delete(upcomingEvents[index])
                         }
-                    } else if vm.selectedTab == "Past Events" {
-                        ForEach(pastEvents, id: \.id) { event in
-                            ProfileEventCardView(event: Event(
-                                id: event.id,
-                                creatorPid: event.creatorPid,
-                                title: event.title,
-                                location: event.location,
-                                description: event.eventDescription,
-                                timestamp: event.timestamp,
-                                image_url: event.image_url
-                            ))
-                            .padding(.horizontal, 16)
+                    }
+                } else if vm.selectedTab == "Past Events" {
+                    ForEach(pastEvents, id: \.id) { event in
+                        ProfileEventCardView(event: Event(
+                            id: event.id,
+                            creatorPid: event.creatorPid,
+                            title: event.title,
+                            location: event.location,
+                            description: event.eventDescription,
+                            timestamp: event.timestamp,
+                            image_url: event.image_url
+                        ))
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    }
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            modelContext.delete(pastEvents[index])
                         }
                     }
                 }
             }
+            .listStyle(.plain)
         }
     }
 }

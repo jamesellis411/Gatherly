@@ -7,10 +7,31 @@
 
 import Foundation
 import PhotosUI
+import SwiftData
 import SwiftUI
 
 struct ProfileView: View {
     @Bindable var vm: ProfileViewModel
+    @Query var upcomingEvents: [RSVPedEvent]
+    @Query var pastEvents: [RSVPedEvent]
+
+    /// Build queries at runtime to use Date.now and accept a view model
+    init(vm: ProfileViewModel) {
+        self.vm = vm
+
+        let now = Date.now
+        _upcomingEvents = Query(
+            filter: #Predicate { event in
+                event.timestamp >= now
+            }
+        )
+        _pastEvents = Query(
+            filter: #Predicate { event in
+                event.timestamp < now
+            }
+        )
+    }
+
     var body: some View {
         VStack {
             // PhotosPicker and Name
@@ -66,6 +87,38 @@ struct ProfileView: View {
                 }
             }
             .padding()
+
+            ScrollView {
+                LazyVStack(spacing: 10) {
+                    if vm.selectedTab == "RSVP'd" {
+                        ForEach(upcomingEvents, id: \.id) { event in
+                            ProfileEventCardView(event: Event(
+                                id: event.id,
+                                creatorPid: event.creatorPid,
+                                title: event.title,
+                                location: event.location,
+                                description: event.eventDescription,
+                                timestamp: event.timestamp,
+                                image_url: event.image_url
+                            ))
+                            .padding(.horizontal, 16)
+                        }
+                    } else if vm.selectedTab == "Past Events" {
+                        ForEach(pastEvents, id: \.id) { event in
+                            ProfileEventCardView(event: Event(
+                                id: event.id,
+                                creatorPid: event.creatorPid,
+                                title: event.title,
+                                location: event.location,
+                                description: event.eventDescription,
+                                timestamp: event.timestamp,
+                                image_url: event.image_url
+                            ))
+                            .padding(.horizontal, 16)
+                        }
+                    }
+                }
+            }
         }
     }
 }

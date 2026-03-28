@@ -12,7 +12,7 @@ struct EventMapView: View {
     @State private var position = MapCameraPosition.automatic
     @State private var selectedEvent: Event?
 
-    @State private var mapType: MapStyle = .standard
+    @State private var mapType: MapStyle = .hybrid
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 35.904613, longitude: -79.046761),
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
@@ -51,6 +51,24 @@ struct EventMapView: View {
             }
             .sheet(item: $selectedEvent) { event in
                 MapDetailView(event: event)
+            }
+            .overlay(alignment: .topLeading) {
+                Button {
+                    vm.showOnlyMyEvents.toggle()
+                    Task {
+                        try await vm.load()
+                    }
+                } label : {
+                    Text(vm.showOnlyMyEvents ? "Show All Events" : "Show Only My Events")
+                        .padding(8)
+                        .background(.regularMaterial)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(.primary, lineWidth: 1)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                }
+                .padding(.leading)
             }
         }
     }

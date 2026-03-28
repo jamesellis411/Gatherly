@@ -14,6 +14,8 @@ class EventsMapViewModel {
     var annotations: [EventAnnotation] = []
     private let geocoder = CLGeocoder()
     
+    var showOnlyMyEvents: Bool = false
+    
     var errorString: String = ""
     var isError: Bool = false
     
@@ -23,9 +25,10 @@ class EventsMapViewModel {
             events = response
                 
             let addressEvents = response.filter { !$0.location.isEmpty }
+            let filteredEvents = showOnlyMyEvents ? addressEvents.filter { $0.creatorPid == "730739772"} : addressEvents
                                 
             annotations.removeAll()
-            for event in addressEvents {
+            for event in filteredEvents {
                 if let coordinate = try await geocode(event.location) {
                     annotations.append(EventAnnotation(id: event.id ?? UUID().uuidString,
                                                        event: event,

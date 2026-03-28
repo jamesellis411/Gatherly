@@ -16,6 +16,7 @@ class EventViewModel {
     var errorString: String = ""
     var isError: Bool = false
     
+    /// SORTING
     enum SortOption {
         case none, alphabetical, upcoming
     }
@@ -26,25 +27,25 @@ class EventViewModel {
         // handles searchText
         var eventsToShow = events.filter { event in
             searchText.isEmpty || event.title.localizedCaseInsensitiveContains(searchText)
-      }
-                
-      switch sortOption {
-      case .none:
-          break
-      case .alphabetical:
-          eventsToShow.sort { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
-      case .upcoming:
-          // first filters only events whose dates have not passed
-          // Date.now == this moment in time, so anything greater than this is a future Date
-          eventsToShow = eventsToShow.filter { event in
-            event.timestamp > Date.now
         }
-        // sorts the upcoming events by their date
-        eventsToShow.sort { $0.timestamp < $1.timestamp }
-      }
-      return eventsToShow
+                
+        switch sortOption {
+        case .none:
+            break
+        case .alphabetical:
+            eventsToShow.sort { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+        case .upcoming:
+            // first filters only events whose dates have not passed
+            // Date.now == this moment in time, so anything greater than this is a future Date
+            eventsToShow = eventsToShow.filter { event in
+                event.timestamp > Date.now
+            }
+            // sorts the upcoming events by their date
+            eventsToShow.sort { $0.timestamp < $1.timestamp }
+        }
+        return eventsToShow
     }
-    
+        
     func fetchEvents() async {
         loadingState = .loading
         do {

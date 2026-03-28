@@ -8,8 +8,8 @@
 import Foundation
 import Observation
 import PhotosUI
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @Observable
 class ProfileViewModel {
@@ -25,10 +25,10 @@ class ProfileViewModel {
     func filterEvents() {
         // Implement functionality later
     }
-    
+
     var selectedPhoto: PhotosPickerItem?
     var createdEvent: Event?
-    
+
     var base64String: String?
     var uiImage: UIImage?
     var image: Image? {

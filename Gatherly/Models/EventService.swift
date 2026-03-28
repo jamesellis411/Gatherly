@@ -77,8 +77,7 @@ class EventService {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             do {
-                let createdEvent = try decoder.decode(Event.self, from: data)
-                return createdEvent
+                return try decoder.decode(Event.self, from: data)
             } catch {
                 throw ErrorType.codingError
             }
@@ -157,7 +156,7 @@ class EventService {
             guard httpResponse.statusCode == 200 else {
                 throw ErrorType.networkError
             }
-        } catch is URLError{
+        } catch is URLError {
             throw ErrorType.networkError
         } catch {
             throw ErrorType.unknown

@@ -15,10 +15,10 @@ struct HomeView: View {
         NavigationStack {
             HStack {
                 Menu {
-                    Button("Alphabetical") { vm.sortOption = .alphabetical}
-                    Button("Upcoming") { vm.sortOption = .upcoming}
-                    Button("None") { vm.sortOption = .none}
-                } label : {
+                    Button("Alphabetical") { vm.sortOption = .alphabetical }
+                    Button("Upcoming") { vm.sortOption = .upcoming }
+                    Button("None") { vm.sortOption = .none }
+                } label: {
                     Text("Sort By")
                         .padding(8)
                         .overlay(
@@ -72,7 +72,7 @@ struct HomeView: View {
         }
         .alert(vm.errorString, isPresented: $vm.isError) {
             Button("Try Again") {
-                Task{ await vm.fetchEvents()}
+                Task { await vm.fetchEvents() }
             }
             Button("Cancel", role: .cancel) {}
         }

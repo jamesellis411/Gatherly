@@ -25,7 +25,7 @@ class EventsMapViewModel {
             events = response
                 
             let addressEvents = response.filter { !$0.location.isEmpty }
-            let filteredEvents = showOnlyMyEvents ? addressEvents.filter { $0.creatorPid == "730739772"} : addressEvents
+            let filteredEvents = showOnlyMyEvents ? addressEvents.filter { $0.creatorPid == "730739772" } : addressEvents
                                 
             annotations.removeAll()
             for event in filteredEvents {

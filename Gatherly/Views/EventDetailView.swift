@@ -15,6 +15,13 @@ struct EventDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var isShowingDialog = false
     @Bindable var vm: EventViewModel
+    @State var detailVM: EventDetailViewModel
+    
+    init(event: Event, vm: EventViewModel) {
+        self.event = event
+        self.vm = vm
+        _detailVM = State(initialValue: EventDetailViewModel(event: event))
+    }
 
     var body: some View {
         VStack(spacing: 30) {
@@ -84,30 +91,32 @@ struct EventDetailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 10)
 
-            HStack {
-                Spacer()
-                Button(action: {
-                    let rsvp = RSVPedEvent(id: event.id!, title: event.title, location: event.location, creatorPid: event.creatorPid, eventDescription: event.description, timestamp: event.timestamp, image_url: event.image_url)
-                    modelContext.insert(rsvp)
-                    try? modelContext.save()
-                    dismiss()
-                }) {
-                    Text("RSVP")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 48)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(.cyan, lineWidth: 2)
-                        )
+            if detailVM.showRSVPButton {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        let rsvp = RSVPedEvent(id: event.id!, title: event.title, location: event.location, creatorPid: event.creatorPid, eventDescription: event.description, timestamp: event.timestamp, image_url: event.image_url)
+                        modelContext.insert(rsvp)
+                        try? modelContext.save()
+                        dismiss()
+                    }) {
+                        Text("RSVP")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .padding(.horizontal, 48)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(.cyan, lineWidth: 2)
+                            )
+                    }
+                    .foregroundStyle(.primary)
+                    Spacer()
                 }
-                .foregroundStyle(.primary)
-                Spacer()
             }
         }
         .navigationBarBackButtonHidden(true)
-        .navigationTitle("Event Details")
+        .navigationTitle(detailVM.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -118,11 +127,13 @@ struct EventDetailView: View {
                 }
             }
 
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isShowingDialog = true
-                }) {
-                    Image(systemName: "ellipsis")
+            if detailVM.showEllipsisButton {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        isShowingDialog = true
+                    }) {
+                        Image(systemName: "ellipsis")
+                    }
                 }
             }
         }

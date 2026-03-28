@@ -43,7 +43,7 @@ struct EventMapView: View {
             }
             .alert("Error", isPresented: $vm.isError) {
                 Button("Try Again") {
-                    Task{ try await vm.load()}
+                    Task { try await vm.load() }
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
@@ -58,7 +58,7 @@ struct EventMapView: View {
                     Task {
                         try await vm.load()
                     }
-                } label : {
+                } label: {
                     Text(vm.showOnlyMyEvents ? "Show All Events" : "Show Only My Events")
                         .padding(8)
                         .background(.regularMaterial)

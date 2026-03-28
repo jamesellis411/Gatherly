@@ -30,7 +30,7 @@ class AddEventViewModel {
 
     var selectedPhoto: PhotosPickerItem?
     var createdEvent: Event?
-    
+
     var loadingState: LoadingState = .idle
     var isError: Bool = false
     var errorString: String = ""
@@ -41,7 +41,7 @@ class AddEventViewModel {
                 let uiImage = UIImage(data: data)
                 self.uiImage = uiImage
             }
-        } catch let error as ErrorType{
+        } catch let error as ErrorType {
             isError = true
             errorString = error.localizedDescription
         } catch {

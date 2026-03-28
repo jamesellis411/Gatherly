@@ -14,14 +14,16 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             HStack {
-                Button(action: {
-                    // Add functionality later
-                }) {
-                    Text("Sort by")
+                Menu {
+                    Button("Alphabetical") { vm.sortOption = .alphabetical}
+                    Button("Upcoming") { vm.sortOption = .upcoming}
+                    Button("None") { vm.sortOption = .none}
+                } label : {
+                    Text("Sort By")
                         .padding(8)
-                        .background(
+                        .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(.primary, lineWidth: 2)
+                                .stroke(.primary, lineWidth: 1)
                         )
                 }
 
@@ -51,11 +53,11 @@ struct HomeView: View {
             case .idle, .success:
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 22) {
-                        ForEach(vm.filteredEventIndices, id: \.self) { index in
+                        ForEach(vm.filteredAndSortedEvents, id: \.self) { event in
                             NavigationLink {
-                                EventDetailView(event: vm.events[index], vm: vm)
+                                EventDetailView(event: event, vm: vm)
                             } label: {
-                                EventCardView(event: vm.events[index])
+                                EventCardView(event: event)
                             }
                             .buttonStyle(.plain)
                         }

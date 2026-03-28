@@ -13,13 +13,37 @@ class EventViewModel {
     var events: [Event] = []
     var loadingState: LoadingState = .idle
     var searchText = ""
-    var filteredEventIndices: [Int] {
-        events.indices.filter { i in
-            searchText.isEmpty || events[i].title.localizedCaseInsensitiveContains(searchText)
-        }
-    }
     var errorString: String = ""
     var isError: Bool = false
+    
+    enum SortOption {
+        case none, alphabetical, upcoming
+    }
+    
+    var sortOption: SortOption = .none
+    
+    var filteredAndSortedEvents: [Event] {
+        // handles searchText
+        var eventsToShow = events.filter { event in
+            searchText.isEmpty || event.title.localizedCaseInsensitiveContains(searchText)
+      }
+                
+      switch sortOption {
+      case .none:
+          break
+      case .alphabetical:
+          eventsToShow.sort { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+      case .upcoming:
+          // first filters only events whose dates have not passed
+          // Date.now == this moment in time, so anything greater than this is a future Date
+          eventsToShow = eventsToShow.filter { event in
+            event.timestamp > Date.now
+        }
+        // sorts the upcoming events by their date
+        eventsToShow.sort { $0.timestamp < $1.timestamp }
+      }
+      return eventsToShow
+    }
     
     func fetchEvents() async {
         loadingState = .loading

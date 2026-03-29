@@ -21,9 +21,10 @@ struct HomeView: View {
                 } label: {
                     Text("Sort By")
                         .padding(8)
+                        .foregroundStyle(.secondary)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(.primary, lineWidth: 1)
+                                .stroke(.secondary, lineWidth: 1)
                         )
                 }
 
@@ -35,6 +36,7 @@ struct HomeView: View {
                         Image(systemName: "plus")
                         Text("Create Event")
                     }
+                    .foregroundStyle(.secondary)
                 }
             }
             .padding(.horizontal, 25)

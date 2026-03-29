@@ -16,7 +16,7 @@ struct EventDetailView: View {
     @State private var isShowingDialog = false
     @Bindable var vm: EventViewModel
     @State var detailVM: EventDetailViewModel
-    
+
     init(event: Event, vm: EventViewModel) {
         self.event = event
         self.vm = vm
@@ -44,6 +44,8 @@ struct EventDetailView: View {
                             case .failure:
                                 Rectangle()
                                     .foregroundStyle(.gray)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 300)
                             @unknown default:
                                 EmptyView()
                             }
@@ -54,6 +56,8 @@ struct EventDetailView: View {
                     // if no image_url property, placeholder is gray box
                     Rectangle()
                         .foregroundStyle(.gray)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 300)
                 }
 
                 // Event Details

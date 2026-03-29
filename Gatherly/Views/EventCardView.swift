@@ -12,7 +12,7 @@ struct EventCardView: View {
     let event: Event
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             // check to see if event's image_url property is nil since it's an optional
             if let imageEvent = event.image_url {
                 // checks to see if image_url is actually a URL
@@ -49,16 +49,16 @@ struct EventCardView: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(event.title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+                    .font(.body)
+                    .fontWeight(.medium)
 
                 Text(event.timestamp.formatted(date: .abbreviated, time: .omitted))
-                    .font(.subheadline)
+                    .font(.body)
                     .foregroundStyle(.secondary)
             }
-            .padding(12)
+            .padding(10)
         }
-        .frame(width: 164, height: 178)
+        .frame(width: 164, height: 178, alignment: .top)
         .background(.regularMaterial)
         .cornerRadius(11)
     }

@@ -76,6 +76,9 @@ struct HomeView: View {
             }
             Button("Cancel", role: .cancel) {}
         }
+        .refreshable {
+            await vm.fetchEvents()
+        }
     }
 }
 

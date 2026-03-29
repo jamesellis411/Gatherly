@@ -10,11 +10,26 @@ import Observation
 
 @Observable
 class EventDetailViewModel {
-    let event: Event
+    var event: Event
+    var errorString: String = ""
+    var isError: Bool = false
     private let currentUserPid = "730739772"
 
     init(event: Event) {
         self.event = event
+    }
+
+    func refresh() async {
+        guard let id = event.id else { return }
+        do {
+            event = try await EventService.shared.fetchEvent(id: id)
+        } catch let error as ErrorType {
+            errorString = error.localizedDescription
+            isError = true
+        } catch {
+            errorString = error.localizedDescription
+            isError = true
+        }
     }
 
     var isMine: Bool {

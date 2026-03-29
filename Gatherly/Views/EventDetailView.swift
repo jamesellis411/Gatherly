@@ -24,135 +24,146 @@ struct EventDetailView: View {
     }
 
     var body: some View {
-        VStack(spacing: 30) {
-            // check to see if event's image_url property is nil since it's an optional
-            if let imageEvent = event.image_url {
-                // checks to see if image_url is actually a URL
-                if let url = URL(string: imageEvent) {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        // when loading, it shows spinner (ProgressView())
-                        case .empty:
-                            ProgressView()
-                        // if loads successfully, shows image, sets it to resizable, and is scaled to Fit
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFit()
-                        // if loading the image fails, show gray box
-                        case .failure:
-                            Rectangle()
-                                .foregroundStyle(.gray)
-                        @unknown default:
-                            EmptyView()
+        ScrollView {
+            VStack(spacing: 30) {
+                // check to see if event's image_url property is nil since it's an optional
+                if let imageEvent = event.image_url {
+                    // checks to see if image_url is actually a URL
+                    if let url = URL(string: imageEvent) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            // when loading, it shows spinner (ProgressView())
+                            case .empty:
+                                ProgressView()
+                            // if loads successfully, shows image, sets it to resizable, and is scaled to Fit
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            // if loading the image fails, show gray box
+                            case .failure:
+                                Rectangle()
+                                    .foregroundStyle(.gray)
+                            @unknown default:
+                                EmptyView()
+                            }
                         }
+                        .ignoresSafeArea(edges: .horizontal)
                     }
-                    .ignoresSafeArea(edges: .horizontal)
+                } else {
+                    // if no image_url property, placeholder is gray box
+                    Rectangle()
+                        .foregroundStyle(.gray)
                 }
-            } else {
-                // if no image_url property, placeholder is gray box
-                Rectangle()
-                    .foregroundStyle(.gray)
-            }
 
-            // Event Details
-            VStack(alignment: .leading, spacing: 8) {
-                Text(event.title)
-                    .font(.title)
-                    .fontWeight(.semibold)
+                // Event Details
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(event.title)
+                        .font(.title)
+                        .fontWeight(.semibold)
 
-                HStack(spacing: 20) {
-                    Text(event.timestamp.formatted(date: .abbreviated, time: .omitted))
+                    HStack(spacing: 20) {
+                        Text(event.timestamp.formatted(date: .abbreviated, time: .omitted))
 
-                    Text("•")
+                        Text("•")
 
-                    Text(event.timestamp.formatted(date: .omitted, time: .shortened))
-                }
-                .foregroundStyle(.secondary)
-                .font(.title3)
-
-                Text(event.location)
+                        Text(event.timestamp.formatted(date: .omitted, time: .shortened))
+                    }
                     .foregroundStyle(.secondary)
                     .font(.title3)
 
-                Divider()
-                    .overlay(.gray)
-            }
-            .padding(.horizontal, 10)
+                    Text(event.location)
+                        .foregroundStyle(.secondary)
+                        .font(.title3)
 
-            // Event Description
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Description")
-                    .font(.title3)
-                Text(event.description)
-                    .foregroundStyle(.secondary)
-                    .font(.title3)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 10)
+                    Divider()
+                        .overlay(.gray)
+                }
+                .padding(.horizontal, 10)
 
-            if detailVM.showRSVPButton {
-                HStack {
-                    Spacer()
+                // Event Description
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Description")
+                        .font(.title3)
+                    Text(event.description)
+                        .foregroundStyle(.secondary)
+                        .font(.title3)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 10)
+
+                if detailVM.showRSVPButton {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            let rsvp = RSVPedEvent(id: event.id!, title: event.title, location: event.location, creatorPid: event.creatorPid, eventDescription: event.description, timestamp: event.timestamp, image_url: event.image_url)
+                            modelContext.insert(rsvp)
+                            try? modelContext.save()
+                            dismiss()
+                        }) {
+                            Text("RSVP")
+                                .font(.title)
+                                .fontWeight(.semibold)
+                                .padding(.horizontal, 48)
+                                .padding(.vertical, 12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(.cyan, lineWidth: 2)
+                                )
+                        }
+                        .foregroundStyle(.primary)
+                        Spacer()
+                    }
+                }
+            }
+            .navigationBarBackButtonHidden(true)
+            .navigationTitle(detailVM.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
                     Button(action: {
-                        let rsvp = RSVPedEvent(id: event.id!, title: event.title, location: event.location, creatorPid: event.creatorPid, eventDescription: event.description, timestamp: event.timestamp, image_url: event.image_url)
-                        modelContext.insert(rsvp)
-                        try? modelContext.save()
                         dismiss()
                     }) {
-                        Text("RSVP")
-                            .font(.title)
-                            .fontWeight(.semibold)
-                            .padding(.horizontal, 48)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(.cyan, lineWidth: 2)
-                            )
+                        Image(systemName: "chevron.left")
                     }
-                    .foregroundStyle(.primary)
-                    Spacer()
                 }
-            }
-        }
-        .navigationBarBackButtonHidden(true)
-        .navigationTitle(detailVM.navigationTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                }
-            }
 
-            if detailVM.showEllipsisButton {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        isShowingDialog = true
-                    }) {
-                        Image(systemName: "ellipsis")
+                if detailVM.showEllipsisButton {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            isShowingDialog = true
+                        }) {
+                            Image(systemName: "ellipsis")
+                        }
                     }
                 }
+            }
+            .confirmationDialog("Advanced Actions", isPresented: $isShowingDialog, titleVisibility: .visible) {
+                NavigationLink("Edit Event") {
+                    EditEventView(vm: EditEventViewModel(event: event), event: event)
+                }
+                Button("Delete Event", role: .destructive) {
+                    Task {
+                        do {
+                            try await vm.deleteEvent(id: event.id!)
+                        }
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    isShowingDialog = false
+                }
+            } message: {
+                Text("Make changes to your event")
             }
         }
-        .confirmationDialog("Advanced Actions", isPresented: $isShowingDialog, titleVisibility: .visible) {
-            NavigationLink("Edit Event") {
-                EditEventView(vm: EditEventViewModel(event: event), event: event)
+        .refreshable {
+            await detailVM.refresh()
+        }
+        .alert(detailVM.errorString, isPresented: $detailVM.isError) {
+            Button("Try Again") {
+                Task { await detailVM.refresh() }
             }
-            Button("Delete Event", role: .destructive) {
-                Task {
-                    do {
-                        try await vm.deleteEvent(id: event.id!)
-                    }
-                }
-            }
-            Button("Cancel", role: .cancel) {
-                isShowingDialog = false
-            }
-        } message: {
-            Text("Make changes to your event")
+            Button("Cancel", role: .cancel) {}
         }
     }
 }

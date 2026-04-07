@@ -5,6 +5,7 @@
 //  Created by James Ellis on 2/5/26.
 //
 
+import SwiftData
 import SwiftUI
 
 @main
@@ -13,5 +14,6 @@ struct GatherlyApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [RSVPedEvent.self, UserProfile.self])
     }
 }

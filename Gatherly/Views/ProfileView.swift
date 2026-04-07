@@ -7,10 +7,43 @@
 
 import Foundation
 import PhotosUI
+import SwiftData
 import SwiftUI
 
 struct ProfileView: View {
     @Bindable var vm: ProfileViewModel
+    @Query var upcomingEvents: [RSVPedEvent]
+    @Query var pastEvents: [RSVPedEvent]
+    @Query var userProfiles: [UserProfile]
+    @Environment(\.modelContext) private var modelContext
+
+    var profile: UserProfile {
+        if let first = userProfiles.first {
+            return first
+        } else {
+            let tempProfile = UserProfile()
+            modelContext.insert(tempProfile)
+            return tempProfile
+        }
+    }
+
+    /// Build queries at runtime to use Date.now and accept a view model
+    init(vm: ProfileViewModel) {
+        self.vm = vm
+
+        let now = Date.now
+        _upcomingEvents = Query(
+            filter: #Predicate { event in
+                event.timestamp >= now
+            }
+        )
+        _pastEvents = Query(
+            filter: #Predicate { event in
+                event.timestamp < now
+            }
+        )
+    }
+
     var body: some View {
         VStack {
             // PhotosPicker and Name
@@ -27,6 +60,11 @@ struct ProfileView: View {
                                             .resizable()
                                             .scaledToFill()
                                             .clipShape(Circle())
+                                    } else if let data = profile.imageData, let uiImage = UIImage(data: data) {
+                                        Image(uiImage: uiImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .clipShape(Circle())
                                     } else {
                                         Image(systemName: "plus")
                                             .foregroundStyle(.cyan)
@@ -37,7 +75,7 @@ struct ProfileView: View {
                     }
                     .onChange(of: vm.selectedPhoto) { // use onChange to trigger call to vm
                         Task {
-                            await vm.loadImage()
+                            await vm.loadImage(profile: profile, modelContext: modelContext)
                         }
                     }
 
@@ -66,6 +104,49 @@ struct ProfileView: View {
                 }
             }
             .padding()
+
+            List {
+                if vm.selectedTab == "RSVP'd" {
+                    ForEach(upcomingEvents, id: \.id) { event in
+                        ProfileEventCardView(event: Event(
+                            id: event.id,
+                            creatorPid: event.creatorPid,
+                            title: event.title,
+                            location: event.location,
+                            description: event.eventDescription,
+                            timestamp: event.timestamp,
+                            image_url: event.image_url
+                        ))
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    }
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            modelContext.delete(upcomingEvents[index])
+                        }
+                    }
+                } else if vm.selectedTab == "Past Events" {
+                    ForEach(pastEvents, id: \.id) { event in
+                        ProfileEventCardView(event: Event(
+                            id: event.id,
+                            creatorPid: event.creatorPid,
+                            title: event.title,
+                            location: event.location,
+                            description: event.eventDescription,
+                            timestamp: event.timestamp,
+                            image_url: event.image_url
+                        ))
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    }
+                    .onDelete { indexSet in
+                        for index in indexSet {
+                            modelContext.delete(pastEvents[index])
+                        }
+                    }
+                }
+            }
+            .listStyle(.plain)
         }
     }
 }

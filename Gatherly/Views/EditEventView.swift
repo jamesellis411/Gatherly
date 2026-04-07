@@ -133,10 +133,10 @@ struct EditEventView: View {
                         Button(action: {
                             Task {
                                 do {
-                                    try await vm.editEvent()
-                                    dismiss()
-                                } catch {
-                                    print("Error editing event: \(error)")
+                                    await vm.editEvent()
+                                    if case .success = vm.loadingState {
+                                        dismiss()
+                                    }
                                 }
                             }
                         }) {
@@ -170,15 +170,13 @@ struct EditEventView: View {
         .task(id: vm.selectedPhoto) {
             await vm.loadImage()
         }
-        .alert("Error", isPresented: $vm.isError){
+        .alert(vm.errorString, isPresented: $vm.isError){
             Button("Try Again") {
                 Task {
-                    try await vm.editEvent()
+                    await vm.editEvent()
                 }
             }
             Button("Cancel", role: .cancel) {}
-        } message: {
-            Text(vm.errorString)
         }
     }
 }

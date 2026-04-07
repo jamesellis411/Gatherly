@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import SwiftData
 import SwiftUI
 
 struct EventDetailView: View {
     let event: Event
     @Environment(\.dismiss) private var dismiss // Syntax for dismiss action in back button
+    @Environment(\.modelContext) private var modelContext
     @State private var isShowingDialog = false
     @Bindable var vm: EventViewModel
 
@@ -85,7 +87,10 @@ struct EventDetailView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    // Put RSVP functionality here
+                    let rsvp = RSVPedEvent(id: event.id!, title: event.title, location: event.location, creatorPid: event.creatorPid, eventDescription: event.description, timestamp: event.timestamp, image_url: event.image_url)
+                    modelContext.insert(rsvp)
+                    try? modelContext.save()
+                    dismiss()
                 }) {
                     Text("RSVP")
                         .font(.title)

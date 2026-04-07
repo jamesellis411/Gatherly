@@ -34,10 +34,6 @@ struct EventMapView: View {
                     }
                 }
             }
-            .mapStyle(mapType)
-            .onAppear {
-                position = MapCameraPosition.region(region) // Currently centered at UNC
-            }
             .task {
                 do {
                     try await vm.load()

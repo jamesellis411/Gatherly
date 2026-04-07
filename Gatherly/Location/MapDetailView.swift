@@ -43,7 +43,7 @@ struct MapDetailView: View {
                     .foregroundStyle(.gray)
                     .frame(height: 400)
             }
-
+            
             // Event Details
             VStack(alignment: .leading, spacing: 8) {
                 Text(event.title)
@@ -79,6 +79,8 @@ struct MapDetailView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 10)
+            
+            Spacer()
         }
     }
 }

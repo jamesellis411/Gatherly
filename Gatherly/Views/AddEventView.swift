@@ -19,7 +19,7 @@ struct AddEventView: View {
             case .loading:
                 ProgressView("Creating event...")
             case .failed(let error):
-                ContentUnavailableView{
+                ContentUnavailableView {
                     Label("Something went wrong", systemImage: "x.circle.fill")
                 } description: {
                     Text(error.localizedDescription)
@@ -126,7 +126,6 @@ struct AddEventView: View {
                     }
                 }
             }
-            
         }
         .task(id: vm.selectedPhoto) {
             await vm.loadImage()
@@ -137,7 +136,7 @@ struct AddEventView: View {
                     await vm.createEvent()
                 }
             }
-            Button("Cancel", role: .cancel){}
+            Button("Cancel", role: .cancel) {}
         }
     }
 }

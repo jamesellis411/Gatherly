@@ -10,7 +10,7 @@ import SwiftData
 @Model
 class UserProfile {
     var imageData: Data?
-    
+
     init(imageData: Data? = nil) {
         self.imageData = imageData
     }

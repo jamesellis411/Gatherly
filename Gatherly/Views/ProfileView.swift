@@ -148,6 +148,7 @@ struct ProfileView: View {
             }
             .listStyle(.plain)
         }
+        .padding(.top, 60)
     }
 }
 

@@ -77,8 +77,7 @@ class EventService {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             do {
-                let createdEvent = try decoder.decode(Event.self, from: data)
-                return createdEvent
+                return try decoder.decode(Event.self, from: data)
             } catch {
                 throw ErrorType.codingError
             }
@@ -157,7 +156,30 @@ class EventService {
             guard httpResponse.statusCode == 200 else {
                 throw ErrorType.networkError
             }
-        } catch is URLError{
+        } catch is URLError {
+            throw ErrorType.networkError
+        } catch {
+            throw ErrorType.unknown
+        }
+    }
+    
+    func fetchEvent(id: String) async throws -> Event {
+        do {
+            // perform network request using URLSession
+            guard let path = URL(string: "\(baseURL)events/\(id)") else {
+                throw ErrorType.invalidURL
+            }
+            let (data, _) = try await URLSession.shared.data(from: path)
+            
+            // decode response using JSONDecoder()
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            
+            guard let event = try? decoder.decode(Event.self, from: data) else {
+                throw ErrorType.codingError
+            }
+            return event
+        } catch is URLError {
             throw ErrorType.networkError
         } catch {
             throw ErrorType.unknown

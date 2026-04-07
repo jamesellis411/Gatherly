@@ -5,8 +5,8 @@
 //  Created by James Ellis on 3/20/26.
 //
 
-import SwiftData
 import Foundation
+import SwiftData
 
 @Model
 class RSVPedEvent {

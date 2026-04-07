@@ -41,7 +41,7 @@ struct EditEventView: View {
                                     .padding(20)
                                     .background(.thinMaterial)
                             }
-                            
+
                             // Prioritize newly selected photo
                             if let image = vm.image {
                                 image
@@ -57,7 +57,6 @@ struct EditEventView: View {
                                         // when loading, it shows spinner (ProgressView())
                                         case .empty:
                                             ProgressView()
-                                            
                                         // if loads successfully, shows image, sets it to resizable, and is scaled to fill
                                         case .success(let image):
                                             image
@@ -68,9 +67,9 @@ struct EditEventView: View {
                                         // if loading the image fails, show gray box
                                         case .failure:
                                             Rectangle()
-                                            .foregroundStyle(.gray)
-                                            .scaledToFit()
-                                            .frame(height: 75)
+                                                .foregroundStyle(.gray)
+                                                .scaledToFit()
+                                                .frame(height: 75)
                                         @unknown default:
                                             EmptyView()
                                         }
@@ -170,7 +169,7 @@ struct EditEventView: View {
         .task(id: vm.selectedPhoto) {
             await vm.loadImage()
         }
-        .alert(vm.errorString, isPresented: $vm.isError){
+        .alert(vm.errorString, isPresented: $vm.isError) {
             Button("Try Again") {
                 Task {
                     await vm.editEvent()

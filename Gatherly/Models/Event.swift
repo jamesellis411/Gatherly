@@ -4,8 +4,8 @@
 //
 //  Created by James Ellis on 2/5/26.
 //
-import Foundation
 import CoreLocation
+import Foundation
 
 struct Event: Hashable, Codable, Identifiable {
     var id: String?
